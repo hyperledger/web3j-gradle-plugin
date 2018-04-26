@@ -1,0 +1,24 @@
+apply plugin : 'java-gradle-plugin'
+apply plugin : 'maven'
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven { url "https://dl.bintray.com/ethereum/maven/" }
+}
+
+dependencies {
+    compile "org.ethereum:ethereumj-core:1.7.0-RELEASE"
+    compile "org.web3j:codegen:3.2.0"
+
+    testCompile 'junit:junit:4.12'
+}
+
+gradlePlugin {
+    plugins {
+        web3jgradleplugin {
+            id = 'web3j-gradle-plugin'
+            implementationClass = 'org.web3j.gradleplugin.Web3jGradlePlugin'
+        }
+    }
+}

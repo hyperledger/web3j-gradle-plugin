@@ -1,5 +1,7 @@
 package org.web3j.gradleplugin;
 
+import org.apache.maven.shared.model.fileset.FileSet;
+import org.apache.maven.shared.model.fileset.util.FileSetManager;
 import org.ethereum.solidity.compiler.SolidityCompiler;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.TaskAction;
@@ -14,16 +16,18 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.Map;
 
 
 public class GenerateJavaTask extends DefaultTask {
 
     // TODO: this should be changed to a folder
-    private String contractName;
+    // private String contractName;
 
     // TODO: blank for now, this doesn't work when we put a value here
-    private static final String DEFAULT_PACKAGE = "";
+    private static final String DEFAULT_INCLUDE = "**/*.sol";
+    private static final String DEFAULT_PACKAGE = "**/*.sol";
     private static final String DEFAULT_SOURCE_DESTINATION = "src/main/java";
     private static final String DEFAULT_SOLIDITY_SOURCES = "src/main/resources";
 
@@ -33,22 +37,31 @@ public class GenerateJavaTask extends DefaultTask {
     private String javaPackageName = DEFAULT_PACKAGE;
     private String javaDestinationFolder = DEFAULT_SOURCE_DESTINATION;
 
+    protected FileSet soliditySourceFiles = new FileSet();
+
     private static final Logger log = LoggerFactory.getLogger(GenerateJavaTask.class);
 
-    public String getContractName() {
-        return contractName;
-    }
+    // public String getContractName() {
+    //    return contractName;
+    //}
 
-    public void setContractName(String contractName) {
-        this.contractName = contractName;
-    }
+    //public void setContractName(String contractName) {
+    //    this.contractName = contractName;
+    //}
 
     @TaskAction
-    void action() throws Exception {
+    void actionOnAllContracts() throws Exception {
 
-        // solidity file
-        String contractPath = DEFAULT_SOLIDITY_SOURCES + "/" + getContractName();
+        soliditySourceFiles.setDirectory(DEFAULT_SOLIDITY_SOURCES);
+        soliditySourceFiles.setIncludes(Collections.singletonList(DEFAULT_INCLUDE));
 
+        for (String contractPath : new FileSetManager().getIncludedFiles(soliditySourceFiles)){
+            log.info("\tAction on contract '" + DEFAULT_SOLIDITY_SOURCES + "/" + contractPath + "'" );
+            actionOnOneContract(DEFAULT_SOLIDITY_SOURCES + "/" + contractPath);
+        }
+    }
+
+    private void actionOnOneContract(String contractPath) throws Exception {
         Map<String, Map<String, String>> contracts = getCompiledContract(contractPath);
         if (contracts == null) {
             log.warn("\tNo Contract found for file '" + contractPath + "'");
@@ -56,7 +69,7 @@ public class GenerateJavaTask extends DefaultTask {
         }
         for (String contractName : contracts.keySet()) {
             try {
-                log.info("\tTry to build java class for contract '" + contractName + "'");
+                log.info("\tTry to build java class for contract '" + contractName + "'" );
                 generateJavaClass(contracts, contractName);
                 log.info("\tBuilt Class for contract '" + contractName + "'");
             } catch (Exception e) {
@@ -110,6 +123,7 @@ public class GenerateJavaTask extends DefaultTask {
 
     private void generateJavaClass(Map<String, Map<String, String>> result, String contractName) throws IOException, ClassNotFoundException {
 
+        System.out.println("In the java generate class");
         new SolidityFunctionWrapper(nativeJavaType).generateJavaFiles(
                 contractName,
                 result.get(contractName).get("bin"),

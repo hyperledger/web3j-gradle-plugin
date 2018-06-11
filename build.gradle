@@ -1,5 +1,6 @@
 apply plugin : 'java-gradle-plugin'
 apply plugin : 'maven'
+apply plugin : 'maven-publish'
 
 repositories {
     mavenCentral()
@@ -10,8 +11,20 @@ repositories {
 dependencies {
     compile "org.ethereum:ethereumj-core:1.7.0-RELEASE"
     compile "org.web3j:codegen:3.2.0"
-
+    compile "org.apache.maven.shared:file-management:3.0.0"
+    
     testCompile 'junit:junit:4.12'
+}
+
+publishing {
+    publications {
+        pluginPublication (MavenPublication) {
+            from    components.java
+            groupId    "org.web3j"
+            artifactId    "web3j-gradle-plugin"
+            version    "0.1.0-SNAPSHOT"
+        }
+    }
 }
 
 gradlePlugin {

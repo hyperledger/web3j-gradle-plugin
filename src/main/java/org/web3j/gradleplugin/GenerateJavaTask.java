@@ -15,6 +15,7 @@ import javax.script.ScriptException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Map;
@@ -22,32 +23,24 @@ import java.util.Map;
 
 public class GenerateJavaTask extends DefaultTask {
 
-    // TODO: this should be changed to a folder
-    // private String contractName;
 
     // TODO: blank for now, this doesn't work when we put a value here
     private static final String DEFAULT_INCLUDE = "**/*.sol";
-    private static final String DEFAULT_PACKAGE = "";
+    // private static final String DEFAULT_PACKAGE = "org.web3j.model";
+    private static final String DEFAULT_PACKAGE = "org.ugo";
     private static final String DEFAULT_SOURCE_DESTINATION = "src/main/java";
     private static final String DEFAULT_SOLIDITY_SOURCES = "src/main/resources";
 
     private final boolean nativeJavaType = true;
 
-    // this should be set
+    // this should be set and used
     private String javaPackageName = DEFAULT_PACKAGE;
     private String javaDestinationFolder = DEFAULT_SOURCE_DESTINATION;
 
-    protected FileSet soliditySourceFiles = new FileSet();
+    private FileSet soliditySourceFiles = new FileSet();
 
     private static final Logger log = LoggerFactory.getLogger(GenerateJavaTask.class);
 
-    // public String getContractName() {
-    //    return contractName;
-    //}
-
-    //public void setContractName(String contractName) {
-    //    this.contractName = contractName;
-    //}
 
     @TaskAction
     void actionOnAllContracts() throws Exception {
@@ -122,8 +115,14 @@ public class GenerateJavaTask extends DefaultTask {
     }
 
     private void generateJavaClass(Map<String, Map<String, String>> result, String contractName) throws IOException, ClassNotFoundException {
+        
+        // create the destination repo for contracts
+        log.info("\tCurrent directory:" + System.getProperty("user.dir"));
+        String packageFolders = javaPackageName.replace(".", "/");
+        log.info("\tTry to create the folders " + packageFolders );
+        Files.createDirectories(Paths.get(DEFAULT_SOURCE_DESTINATION + "/" + packageFolders));
+        log.info("\tAnd also the folders " + DEFAULT_SOURCE_DESTINATION + "/" + packageFolders);
 
-        System.out.println("In the java generate class");
         new SolidityFunctionWrapper(nativeJavaType).generateJavaFiles(
                 contractName,
                 result.get(contractName).get("bin"),

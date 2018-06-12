@@ -23,11 +23,8 @@ import java.util.Map;
 
 public class GenerateJavaTask extends DefaultTask {
 
-
-    // TODO: blank for now, this doesn't work when we put a value here
     private static final String DEFAULT_INCLUDE = "**/*.sol";
-    // private static final String DEFAULT_PACKAGE = "org.web3j.model";
-    private static final String DEFAULT_PACKAGE = "org.ugo";
+    private static final String DEFAULT_PACKAGE = "org.web3j.model";
     private static final String DEFAULT_SOURCE_DESTINATION = "src/main/java";
     private static final String DEFAULT_SOLIDITY_SOURCES = "src/main/resources";
 
@@ -117,11 +114,7 @@ public class GenerateJavaTask extends DefaultTask {
     private void generateJavaClass(Map<String, Map<String, String>> result, String contractName) throws IOException, ClassNotFoundException {
         
         // create the destination repo for contracts
-        log.info("\tCurrent directory:" + System.getProperty("user.dir"));
-        String packageFolders = javaPackageName.replace(".", "/");
-        log.info("\tTry to create the folders " + packageFolders );
-        Files.createDirectories(Paths.get(DEFAULT_SOURCE_DESTINATION + "/" + packageFolders));
-        log.info("\tAnd also the folders " + DEFAULT_SOURCE_DESTINATION + "/" + packageFolders);
+        createJavaFolders();
 
         new SolidityFunctionWrapper(nativeJavaType).generateJavaFiles(
                 contractName,
@@ -129,5 +122,12 @@ public class GenerateJavaTask extends DefaultTask {
                 result.get(contractName).get("abi"),
                 javaDestinationFolder,
                 javaPackageName);
+    }
+
+    private void createJavaFolders() throws IOException {
+        String currentDir = System.getProperty("user.dir");
+        String packageFolders = javaPackageName.replace(".", "/");
+        log.info("\tCreation of folders: " + currentDir + "/" + DEFAULT_SOURCE_DESTINATION + "/" + packageFolders);
+        Files.createDirectories(Paths.get(currentDir + "/" + DEFAULT_SOURCE_DESTINATION + "/" + packageFolders));
     }
 }

@@ -27,7 +27,7 @@ public class GenerateJavaTask extends DefaultTask {
 
     // TODO: blank for now, this doesn't work when we put a value here
     private static final String DEFAULT_INCLUDE = "**/*.sol";
-    private static final String DEFAULT_PACKAGE = "**/*.sol";
+    private static final String DEFAULT_PACKAGE = "";
     private static final String DEFAULT_SOURCE_DESTINATION = "src/main/java";
     private static final String DEFAULT_SOLIDITY_SOURCES = "src/main/resources";
 

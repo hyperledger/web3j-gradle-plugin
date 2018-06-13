@@ -4,6 +4,7 @@ import org.apache.maven.shared.model.fileset.FileSet;
 import org.apache.maven.shared.model.fileset.util.FileSetManager;
 import org.ethereum.solidity.compiler.SolidityCompiler;
 import org.gradle.api.DefaultTask;
+import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.TaskAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,31 +23,42 @@ import java.util.Map;
 
 public class GenerateJavaTask extends DefaultTask {
 
+    private static final Logger log = LoggerFactory.getLogger(GenerateJavaTask.class);
+
     private static final String DEFAULT_INCLUDE = "**/*.sol";
-    private static final String DEFAULT_PACKAGE = "org.web3j.model";
-    private static final String DEFAULT_SOURCE_DESTINATION = "src/main/java";
+    private static final String DEFAULT_GENERATED_PACKAGE = "org.web3j.model";
+    private static final String DEFAULT_GENERATED_DEST_FOLDER = "src/main/java";
     private static final String DEFAULT_SOLIDITY_SOURCES = "src/main/resources";
+    private static final boolean nativeJavaType = true;
 
-    private final boolean nativeJavaType = true;
+    @Input
+    private String generatedJavaPackageName = DEFAULT_GENERATED_PACKAGE;
 
-    // this should be set and used
-    private String javaPackageName = DEFAULT_PACKAGE;
-    private String javaDestinationFolder = DEFAULT_SOURCE_DESTINATION;
+    @Input
+    private String generatedJavaDestFolder = DEFAULT_GENERATED_DEST_FOLDER;
+
+    @Input
+    private String solidityContractsFolder = DEFAULT_SOLIDITY_SOURCES;
 
     private FileSet soliditySourceFiles = new FileSet();
-
-    private static final Logger log = LoggerFactory.getLogger(GenerateJavaTask.class);
 
 
     @TaskAction
     void actionOnAllContracts() throws Exception {
 
-        soliditySourceFiles.setDirectory(DEFAULT_SOLIDITY_SOURCES);
+
+
+        log.info("\tPrint generatedJavaPackageName: " + generatedJavaPackageName );
+        log.info("\tPrint generatedJavaDestFolder: " + generatedJavaDestFolder );
+        log.info("\tPrint solidityContractsFolder: " + solidityContractsFolder);
+
+
+        soliditySourceFiles.setDirectory(solidityContractsFolder);
         soliditySourceFiles.setIncludes(Collections.singletonList(DEFAULT_INCLUDE));
 
         for (String contractPath : new FileSetManager().getIncludedFiles(soliditySourceFiles)){
-            log.info("\tAction on contract '" + DEFAULT_SOLIDITY_SOURCES + "/" + contractPath + "'" );
-            actionOnOneContract(DEFAULT_SOLIDITY_SOURCES + "/" + contractPath);
+            log.info("\tAction on contract '" + solidityContractsFolder + "/" + contractPath + "'" );
+            actionOnOneContract(solidityContractsFolder + "/" + contractPath);
         }
     }
 
@@ -111,7 +123,7 @@ public class GenerateJavaTask extends DefaultTask {
     }
 
     private void generateJavaClass(Map<String, Map<String, String>> result, String contractName) throws IOException, ClassNotFoundException {
-        
+
         // create the destination repo for contracts
         createJavaFolders();
 
@@ -119,14 +131,40 @@ public class GenerateJavaTask extends DefaultTask {
                 contractName,
                 result.get(contractName).get("bin"),
                 result.get(contractName).get("abi"),
-                javaDestinationFolder,
-                javaPackageName);
+                generatedJavaDestFolder,
+                generatedJavaPackageName);
     }
 
     private void createJavaFolders() throws IOException {
         String currentDir = System.getProperty("user.dir");
-        String packageFolders = javaPackageName.replace(".", "/");
-        log.info("\tCreation of folders: " + currentDir + "/" + DEFAULT_SOURCE_DESTINATION + "/" + packageFolders);
-        Files.createDirectories(Paths.get(currentDir + "/" + DEFAULT_SOURCE_DESTINATION + "/" + packageFolders));
+        String packageFolders = generatedJavaPackageName.replace(".", "/");
+        log.info("\tCreation of folders: " + currentDir + "/" + generatedJavaDestFolder + "/" + packageFolders);
+        Files.createDirectories(Paths.get(currentDir + "/" + generatedJavaDestFolder + "/" + packageFolders));
+    }
+
+
+    // Getters and setters
+    public String getGeneratedJavaPackageName() {
+        return generatedJavaPackageName;
+    }
+
+    public void setGeneratedJavaPackageName(String generatedJavaPackageName) {
+        this.generatedJavaPackageName = generatedJavaPackageName;
+    }
+
+    public String getGeneratedJavaDestFolder() {
+        return generatedJavaDestFolder;
+    }
+
+    public void setGeneratedJavaDestFolder(String generatedJavaDestFolder) {
+        this.generatedJavaDestFolder = generatedJavaDestFolder;
+    }
+
+    public String getSolidityContractsFolder() {
+        return solidityContractsFolder;
+    }
+
+    public void setSolidityContractsFolder(String solidityContractsFolder) {
+        this.solidityContractsFolder = solidityContractsFolder;
     }
 }

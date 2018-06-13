@@ -29,7 +29,7 @@ public class GenerateJavaTask extends DefaultTask {
     private static final String DEFAULT_GENERATED_PACKAGE = "org.web3j.model";
     private static final String DEFAULT_GENERATED_DEST_FOLDER = "src/main/java";
     private static final String DEFAULT_SOLIDITY_SOURCES = "src/main/resources";
-    private static final boolean nativeJavaType = true;
+    private static final boolean NATIVE_JAVA_TYPE = true;
 
     @Input
     private String generatedJavaPackageName = DEFAULT_GENERATED_PACKAGE;
@@ -45,13 +45,6 @@ public class GenerateJavaTask extends DefaultTask {
 
     @TaskAction
     void actionOnAllContracts() throws Exception {
-
-
-
-        log.info("\tPrint generatedJavaPackageName: " + generatedJavaPackageName );
-        log.info("\tPrint generatedJavaDestFolder: " + generatedJavaDestFolder );
-        log.info("\tPrint solidityContractsFolder: " + solidityContractsFolder);
-
 
         soliditySourceFiles.setDirectory(solidityContractsFolder);
         soliditySourceFiles.setIncludes(Collections.singletonList(DEFAULT_INCLUDE));
@@ -125,9 +118,9 @@ public class GenerateJavaTask extends DefaultTask {
     private void generateJavaClass(Map<String, Map<String, String>> result, String contractName) throws IOException, ClassNotFoundException {
 
         // create the destination repo for contracts
-        createJavaFolders();
+        createJavaDestinationFolders();
 
-        new SolidityFunctionWrapper(nativeJavaType).generateJavaFiles(
+        new SolidityFunctionWrapper(NATIVE_JAVA_TYPE).generateJavaFiles(
                 contractName,
                 result.get(contractName).get("bin"),
                 result.get(contractName).get("abi"),
@@ -135,7 +128,7 @@ public class GenerateJavaTask extends DefaultTask {
                 generatedJavaPackageName);
     }
 
-    private void createJavaFolders() throws IOException {
+    private void createJavaDestinationFolders() throws IOException {
         String currentDir = System.getProperty("user.dir");
         String packageFolders = generatedJavaPackageName.replace(".", "/");
         log.info("\tCreation of folders: " + currentDir + "/" + generatedJavaDestFolder + "/" + packageFolders);

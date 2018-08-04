@@ -4,11 +4,12 @@ import java.io.File;
 import java.util.Iterator;
 
 import org.codehaus.groovy.runtime.InvokerHelper;
-import org.codehaus.groovy.runtime.StringGroovyMethods;
 import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.plugins.Convention;
 import org.gradle.api.tasks.SourceSet;
+
+import static org.codehaus.groovy.runtime.StringGroovyMethods.capitalize;
 
 class GenerateJavaAction implements Action<SourceSet> {
 
@@ -27,14 +28,13 @@ class GenerateJavaAction implements Action<SourceSet> {
         final SoliditySourceSet soliditySourceSet = (SoliditySourceSet)
                 convention.getPlugins().get(SoliditySourceSet.NAME);
 
-        final String srcSetName = StringGroovyMethods.capitalize(sourceSet.getName());
-
-        final GenerateJavaTask task = project.getTasks().create(
-                "generate" + srcSetName + "Java", GenerateJavaTask.class);
-
         final Iterator<File> sourceFiles = soliditySourceSet.getSolidity().iterator();
 
         if (sourceFiles.hasNext()) {
+            final String srcSetName = capitalize(sourceSet.getName());
+            final GenerateJavaTask task = project.getTasks().create(
+                    "generate" + srcSetName + "Java", GenerateJavaTask.class);
+
             final File sourcesDir = sourceFiles.next().getParentFile();
             task.setSolidityContractsFolder(sourcesDir.getAbsolutePath());
 

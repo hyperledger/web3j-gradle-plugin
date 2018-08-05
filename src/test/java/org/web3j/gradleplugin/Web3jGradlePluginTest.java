@@ -15,6 +15,7 @@ import org.junit.rules.TemporaryFolder;
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class Web3jGradlePluginTest {
 
@@ -76,6 +77,14 @@ public class Web3jGradlePluginTest {
                 .build();
 
         assertEquals(SUCCESS, result.task(":generateMainJava").getOutcome());
+
+        final File web3jContractsDir = new File(testProjectDir.getRoot(),
+                "build/generated/source/web3j/main/java");
+
+        final File generatedContract = new File(web3jContractsDir,
+                "org/web3j/model/StandardToken.java");
+
+        assertTrue(generatedContract.exists());
     }
 
     private void writeFile(File destination, String content) throws IOException {

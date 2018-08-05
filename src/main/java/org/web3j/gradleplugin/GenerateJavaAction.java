@@ -39,7 +39,7 @@ class GenerateJavaAction implements Action<SourceSet> {
             task.setSolidityContractsFolder(sourcesDir.getAbsolutePath());
 
             final File destFolder = new File(project.getBuildDir(),
-                    "resources/" + sourceSet.getName() + "/solidity");
+                    "generated/source/web3j/" + sourceSet.getName() + "/java");
 
             task.setGeneratedJavaDestFolder(destFolder.getAbsolutePath());
 

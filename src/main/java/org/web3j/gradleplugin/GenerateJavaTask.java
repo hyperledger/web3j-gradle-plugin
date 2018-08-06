@@ -28,18 +28,14 @@ public class GenerateJavaTask extends SourceTask {
     @SuppressWarnings("unused")
     void actionOnAllContracts() throws Exception {
         for (final File contractFile : getSource()) {
-            final String contractPath = contractFile.getAbsolutePath();
-            getProject().getLogger().info("\tAction on contract '" + contractPath + "'");
-            actionOnOneContract(contractPath);
+            getProject().getLogger().info("\tAction on contract '"
+                    + contractFile.getAbsolutePath() + "'");
+            actionOnOneContract(contractFile);
         }
     }
 
-    private void actionOnOneContract(final String contractPath) throws Exception {
-        final Map<String, Map<String, String>> contracts = getCompiledContract(contractPath);
-        if (contracts == null) {
-            getProject().getLogger().warn("\tNo Contract found for file '" + contractPath + "'");
-            return;
-        }
+    private void actionOnOneContract(final File contractFile) throws Exception {
+        final Map<String, Map<String, String>> contracts = getCompiledContract(contractFile);
         for (final String contractName : contracts.keySet()) {
             try {
                 getProject().getLogger().info("\tTry to build java class for contract '" + contractName + "'");
@@ -52,13 +48,8 @@ public class GenerateJavaTask extends SourceTask {
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, Map<String, String>> getCompiledContract(String contractPath)
+    private Map<String, Map<String, String>> getCompiledContract(final File contractFile)
             throws Exception {
-
-        final File contractFile = new File(contractPath);
-        if (!contractFile.exists() || contractFile.isDirectory()) {
-            return Collections.emptyMap();
-        }
 
         final String result = compileSolidityContract(contractFile)
                 // TODO: for some reason a stdin is added to the contract name,

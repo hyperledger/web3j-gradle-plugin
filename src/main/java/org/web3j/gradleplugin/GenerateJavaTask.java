@@ -2,7 +2,6 @@ package org.web3j.gradleplugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,14 +14,12 @@ import org.web3j.codegen.SolidityFunctionWrapper;
 
 public class GenerateJavaTask extends SourceTask {
 
-    private static final String DEFAULT_GENERATED_PACKAGE = "org.web3j.model";
-
     private static final boolean NATIVE_JAVA_TYPE = true;
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Input
-    private String generatedJavaPackageName = DEFAULT_GENERATED_PACKAGE;
+    private String generatedJavaPackageName;
 
     @TaskAction
     @SuppressWarnings("unused")

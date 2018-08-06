@@ -32,17 +32,21 @@ class GenerateJavaAction implements Action<SourceSet> {
         final GenerateJavaTask task = project.getTasks().create(
                 "generate" + srcSetName + "Java", GenerateJavaTask.class);
 
+        // Set the sources for the generation task
         task.setSource(soliditySourceSet.getSolidity());
 
-        final File destFolder = new File(project.getBuildDir(),
-                "generated/source/web3j/" + sourceSet.getName() + "/java");
+        final Web3jPluginExtension web3jExtension = (Web3jPluginExtension)
+                InvokerHelper.getProperty(project, Web3jPluginExtension.NAME);
 
+        final File destFolder = new File(project.getBuildDir(),
+                web3jExtension.getGeneratedFilesBaseDir()
+                        + "/" + sourceSet.getName() + "/java");
+
+        // Set the task output directory
         task.getOutputs().dir(destFolder);
 
-        final String projectGroup = project.getGroup().toString();
-        if (!projectGroup.isEmpty()) {
-            task.setGeneratedJavaPackageName(projectGroup + ".web3j");
-        }
+        // Set the task generated package name
+        task.setGeneratedJavaPackageName(web3jExtension.getGeneratedPackageName());
     }
 
 }

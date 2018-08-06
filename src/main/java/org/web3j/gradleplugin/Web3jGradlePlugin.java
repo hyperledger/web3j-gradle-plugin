@@ -20,6 +20,8 @@ public class Web3jGradlePlugin implements Plugin<Project> {
 
     public void apply(final Project project) {
         project.getPluginManager().apply(JavaPlugin.class);
+        project.getExtensions().create(Web3jPluginExtension.NAME,
+                Web3jPluginExtension.class, project);
 
         final SourceSetContainer sourceSets = project.getConvention()
                 .getPlugin(JavaPluginConvention.class).getSourceSets();

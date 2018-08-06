@@ -54,6 +54,9 @@ public class Web3jGradlePluginTest {
                 // FIXME Plugin version shouldn't be specified here
                 "   id 'web3j-gradle-plugin' version '0.1.0.0'\n" +
                 "}\n" +
+                "web3j {\n" +
+                "    generatedPackageName = 'org.web3j.test'\n" +
+                "}\n" +
                 "sourceSets {\n" +
                 "   main {\n" +
                 "       solidity {\n" +
@@ -84,7 +87,7 @@ public class Web3jGradlePluginTest {
                 "build/generated/source/web3j/main/java");
 
         final File generatedContract = new File(web3jContractsDir,
-                "org/web3j/model/StandardToken.java");
+                "org/web3j/test/StandardToken.java");
 
         assertTrue(generatedContract.exists());
 

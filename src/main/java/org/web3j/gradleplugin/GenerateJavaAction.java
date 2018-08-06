@@ -1,7 +1,6 @@
 package org.web3j.gradleplugin;
 
 import java.io.File;
-import java.util.Iterator;
 
 import org.codehaus.groovy.runtime.InvokerHelper;
 import org.gradle.api.Action;
@@ -28,25 +27,21 @@ class GenerateJavaAction implements Action<SourceSet> {
         final SoliditySourceSet soliditySourceSet = (SoliditySourceSet)
                 convention.getPlugins().get(SoliditySourceSet.NAME);
 
-        final Iterator<File> sourceFiles = soliditySourceSet.getSolidity().iterator();
+        final String srcSetName = capitalize(sourceSet.getName());
 
-        if (sourceFiles.hasNext()) {
-            final String srcSetName = capitalize(sourceSet.getName());
-            final GenerateJavaTask task = project.getTasks().create(
-                    "generate" + srcSetName + "Java", GenerateJavaTask.class);
+        final GenerateJavaTask task = project.getTasks().create(
+                "generate" + srcSetName + "Java", GenerateJavaTask.class);
 
-            final File sourcesDir = sourceFiles.next().getParentFile();
-            task.setSolidityContractsFolder(sourcesDir.getAbsolutePath());
+        task.setSource(soliditySourceSet.getSolidity());
 
-            final File destFolder = new File(project.getBuildDir(),
-                    "generated/source/web3j/" + sourceSet.getName() + "/java");
+        final File destFolder = new File(project.getBuildDir(),
+                "generated/source/web3j/" + sourceSet.getName() + "/java");
 
-            task.setGeneratedJavaDestFolder(destFolder.getAbsolutePath());
+        task.getOutputs().dir(destFolder);
 
-            final String projectGroup = project.getGroup().toString();
-            if (!projectGroup.isEmpty()) {
-                task.setGeneratedJavaPackageName(projectGroup + ".web3j");
-            }
+        final String projectGroup = project.getGroup().toString();
+        if (!projectGroup.isEmpty()) {
+            task.setGeneratedJavaPackageName(projectGroup + ".web3j");
         }
     }
 

@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
+import static org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -50,6 +51,7 @@ public class Web3jGradlePluginTest {
     public void generateJava() throws IOException {
 
         final String buildFileContent = "plugins {\n" +
+                // FIXME Plugin version shouldn't be specified here
                 "   id 'web3j-gradle-plugin' version '0.1.0.0'\n" +
                 "}\n" +
                 "sourceSets {\n" +
@@ -69,14 +71,14 @@ public class Web3jGradlePluginTest {
 
         writeFile(buildFile, buildFileContent);
 
-        final BuildResult result = GradleRunner.create()
+        final GradleRunner generateMainJava = GradleRunner.create()
                 .withProjectDir(testProjectDir.getRoot())
                 .withArguments("generateMainJava")
                 .forwardOutput()
-                .withDebug(true)
-                .build();
+                .withDebug(true);
 
-        assertEquals(SUCCESS, result.task(":generateMainJava").getOutcome());
+        final BuildResult success = generateMainJava.build();
+        assertEquals(SUCCESS, success.task(":generateMainJava").getOutcome());
 
         final File web3jContractsDir = new File(testProjectDir.getRoot(),
                 "build/generated/source/web3j/main/java");
@@ -85,6 +87,9 @@ public class Web3jGradlePluginTest {
                 "org/web3j/model/StandardToken.java");
 
         assertTrue(generatedContract.exists());
+
+        final BuildResult upToDate = generateMainJava.build();
+        assertEquals(UP_TO_DATE, upToDate.task(":generateMainJava").getOutcome());
     }
 
     private void writeFile(File destination, String content) throws IOException {

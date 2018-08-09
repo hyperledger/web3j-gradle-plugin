@@ -38,7 +38,7 @@ public class GenerateJavaTask extends SourceTask {
         for (final String contractName : contracts.keySet()) {
             try {
                 getProject().getLogger().info("\tTry to build java class for contract '" + contractName + "'");
-                generateJavaClass(contracts, contractName.split(":")[1]);
+                generateJavaClass(contracts, contractName);
                 getProject().getLogger().info("\tBuilt Class for contract '" + contractName + "'");
             } catch (final Exception e) {
                 getProject().getLogger().error("Could not build java class for contract '" + contractName + "'", e);
@@ -81,12 +81,14 @@ public class GenerateJavaTask extends SourceTask {
 
     private void generateJavaClass(
             final Map<String, Map<String, String>> result,
-            final String contractName) throws IOException, ClassNotFoundException {
+            final String contractNameKey) throws IOException, ClassNotFoundException {
+
+        final String contractName = contractNameKey.split(":")[1];
 
         new SolidityFunctionWrapper(NATIVE_JAVA_TYPE).generateJavaFiles(
                 contractName,
-                result.get(contractName).get("bin"),
-                result.get(contractName).get("abi"),
+                result.get(contractNameKey).get("bin"),
+                result.get(contractNameKey).get("abi"),
                 getOutputs().getFiles().getSingleFile().getAbsolutePath(),
                 format(generatedJavaPackageName, contractName.toLowerCase()));
     }

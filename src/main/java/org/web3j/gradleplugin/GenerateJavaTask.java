@@ -12,6 +12,8 @@ import org.gradle.api.tasks.SourceTask;
 import org.gradle.api.tasks.TaskAction;
 import org.web3j.codegen.SolidityFunctionWrapper;
 
+import static java.text.MessageFormat.format;
+
 public class GenerateJavaTask extends SourceTask {
 
     private static final boolean NATIVE_JAVA_TYPE = true;
@@ -36,7 +38,7 @@ public class GenerateJavaTask extends SourceTask {
         for (final String contractName : contracts.keySet()) {
             try {
                 getProject().getLogger().info("\tTry to build java class for contract '" + contractName + "'");
-                generateJavaClass(contracts, contractName);
+                generateJavaClass(contracts, contractName.split(":")[1]);
                 getProject().getLogger().info("\tBuilt Class for contract '" + contractName + "'");
             } catch (final Exception e) {
                 getProject().getLogger().error("Could not build java class for contract '" + contractName + "'", e);
@@ -82,11 +84,11 @@ public class GenerateJavaTask extends SourceTask {
             final String contractName) throws IOException, ClassNotFoundException {
 
         new SolidityFunctionWrapper(NATIVE_JAVA_TYPE).generateJavaFiles(
-                contractName.split(":")[1],
+                contractName,
                 result.get(contractName).get("bin"),
                 result.get(contractName).get("abi"),
                 getOutputs().getFiles().getSingleFile().getAbsolutePath(),
-                generatedJavaPackageName);
+                format(generatedJavaPackageName, contractName.toLowerCase()));
     }
 
     // Getters and setters

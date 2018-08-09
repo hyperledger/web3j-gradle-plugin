@@ -10,6 +10,14 @@ import org.gradle.api.tasks.SourceSet;
 
 import static org.codehaus.groovy.runtime.StringGroovyMethods.capitalize;
 
+/**
+ * Gradle action configuring code generation tasks for the
+ * Solidity source sets defined in the project (e.g. main, test).
+ * <p>
+ * For instance, the generated task name for the <code>main</code> source set
+ * will be <code>generateMainJava</code> and for <code>test</code>,
+ * <code>generateTestJava</code>.
+ */
 class GenerateJavaAction implements Action<SourceSet> {
 
     private final Project project;

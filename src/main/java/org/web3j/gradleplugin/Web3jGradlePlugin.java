@@ -9,6 +9,9 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSetContainer;
 
+/**
+ * Gradle plugin class for web3j code generation from Solidity contracts.
+ */
 public class Web3jGradlePlugin implements Plugin<Project> {
 
     private final SourceDirectorySetFactory sourceFactory;

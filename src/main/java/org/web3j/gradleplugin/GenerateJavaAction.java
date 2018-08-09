@@ -49,6 +49,9 @@ class GenerateJavaAction implements Action<SourceSet> {
         final File destFolder = new File(extension.getGeneratedFilesBaseDir()
                 + "/" + sourceSet.getName() + "/java");
 
+        // Add source set to the project Java source sets
+        sourceSet.getJava().srcDir(destFolder);
+
         // Set the task output directory
         task.getOutputs().dir(destFolder);
 

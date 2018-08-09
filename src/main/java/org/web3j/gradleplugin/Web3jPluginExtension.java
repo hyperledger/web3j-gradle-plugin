@@ -48,7 +48,8 @@ public class Web3jPluginExtension {
     }
 
     public Web3jPluginExtension(final Project project) {
-        generatedFilesBaseDir = "generated/source/web3j/";
+        generatedFilesBaseDir = project.getBuildDir().getAbsolutePath()
+                + "/generated/source/web3j/";
 
         // Use the project's group name in generated package
         final String projectGroup = project.getGroup().toString();

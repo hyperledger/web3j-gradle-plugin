@@ -1,163 +1,105 @@
 package org.web3j.gradleplugin;
 
-import org.apache.maven.shared.model.fileset.FileSet;
-import org.apache.maven.shared.model.fileset.util.FileSetManager;
-import org.ethereum.solidity.compiler.SolidityCompiler;
-import org.gradle.api.DefaultTask;
-import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.TaskAction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.web3j.codegen.SolidityFunctionWrapper;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.ethereum.solidity.compiler.SolidityCompiler;
+import org.ethereum.solidity.compiler.SolidityCompiler.Options;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.SourceTask;
+import org.gradle.api.tasks.TaskAction;
+import org.web3j.codegen.SolidityFunctionWrapper;
 
-public class GenerateJavaTask extends DefaultTask {
+import static java.text.MessageFormat.format;
 
-    private static final Logger log = LoggerFactory.getLogger(GenerateJavaTask.class);
+public class GenerateJavaTask extends SourceTask {
 
-    private static final String DEFAULT_INCLUDE = "**/*.sol";
-    private static final String DEFAULT_GENERATED_PACKAGE = "org.web3j.model";
-    private static final String DEFAULT_GENERATED_DEST_FOLDER = "src/main/java";
-    private static final String DEFAULT_SOLIDITY_SOURCES = "src/main/resources";
     private static final boolean NATIVE_JAVA_TYPE = true;
 
-    @Input
-    private String generatedJavaPackageName = DEFAULT_GENERATED_PACKAGE;
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Input
-    private String generatedJavaDestFolder = DEFAULT_GENERATED_DEST_FOLDER;
-
-    @Input
-    private String solidityContractsFolder = DEFAULT_SOLIDITY_SOURCES;
-
-    private FileSet soliditySourceFiles = new FileSet();
-
+    private String generatedJavaPackageName;
 
     @TaskAction
+    @SuppressWarnings("unused")
     void actionOnAllContracts() throws Exception {
-
-        soliditySourceFiles.setDirectory(solidityContractsFolder);
-        soliditySourceFiles.setIncludes(Collections.singletonList(DEFAULT_INCLUDE));
-
-        for (String contractPath : new FileSetManager().getIncludedFiles(soliditySourceFiles)){
-            log.info("\tAction on contract '" + solidityContractsFolder + "/" + contractPath + "'" );
-            actionOnOneContract(solidityContractsFolder + "/" + contractPath);
+        for (final File contractFile : getSource()) {
+            getProject().getLogger().info("\tAction on contract '"
+                    + contractFile.getAbsolutePath() + "'");
+            actionOnOneContract(contractFile);
         }
     }
 
-    private void actionOnOneContract(String contractPath) throws Exception {
-        Map<String, Map<String, String>> contracts = getCompiledContract(contractPath);
-        if (contracts == null) {
-            log.warn("\tNo Contract found for file '" + contractPath + "'");
-            return;
-        }
-        for (String contractName : contracts.keySet()) {
+    private void actionOnOneContract(final File contractFile) throws Exception {
+        final Map<String, Map<String, String>> contracts = getCompiledContract(contractFile);
+        for (final String contractName : contracts.keySet()) {
             try {
-                log.info("\tTry to build java class for contract '" + contractName + "'" );
+                getProject().getLogger().info("\tTry to build java class for contract '" + contractName + "'");
                 generateJavaClass(contracts, contractName);
-                log.info("\tBuilt Class for contract '" + contractName + "'");
-            } catch (Exception e) {
-                log.error("Could not build java class for contract '" + contractName + "'", e);
+                getProject().getLogger().info("\tBuilt Class for contract '" + contractName + "'");
+            } catch (final Exception e) {
+                getProject().getLogger().error("Could not build java class for contract '" + contractName + "'", e);
             }
         }
     }
 
-    private Map<String, Map<String, String>> getCompiledContract(String contractPath) throws Exception {
+    @SuppressWarnings("unchecked")
+    private Map<String, Map<String, String>> getCompiledContract(final File contractFile)
+            throws Exception {
 
-        File f = new File(contractPath);
-        if(!f.exists() || f.isDirectory()) {
-            return null;
-        }
+        final String result = compileSolidityContract(contractFile)
+                // TODO: for some reason a stdin is added to the contract name,
+                // removing it the ugly way for now
+                .replaceAll("<stdin>:", "");
 
-        String result = compileSolidityContract(contractPath);
-        // TODO: for some reason a stdin is added to the contract name, removing it the ugly way for now
-        result = result.replaceAll("<stdin>:", "");
+        final Map<String, Object> json = (Map<String, Object>)
+                OBJECT_MAPPER.readValue(result, Map.class);
 
-        try {
-            ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
-            String script = "JSON.parse(JSON.stringify(" + result + "))";
-            Map<String, Object> json = (Map<String, Object>) engine.eval(script);
-            return (Map<String, Map<String, String>>) json.get("contracts");
-        } catch (ScriptException e) {
-            throw new Exception("Could not parse SolC result", e);
-        }
+        return (Map<String, Map<String, String>>) json.get("contracts");
     }
 
-    private String compileSolidityContract(String contractPath) throws Exception {
-        try {
-            byte[] contract = Files.readAllBytes(Paths.get(contractPath));
-            SolidityCompiler.Result result = SolidityCompiler.getInstance().compileSrc(
-                    contract,
-                    true,
-                    true,
-                    SolidityCompiler.Options.ABI,
-                    SolidityCompiler.Options.BIN,
-                    SolidityCompiler.Options.INTERFACE,
-                    SolidityCompiler.Options.METADATA
-            );
-            if (result.isFailed()) {
-                throw new Exception("Could not compile solidity files\n" + result.errors);
-            }
+    private String compileSolidityContract(final File contractFile) throws Exception {
 
-            return result.output;
-        } catch (IOException ioException) {
-            throw new Exception("Could not compile files", ioException);
+        final SolidityCompiler.Result result = SolidityCompiler.getInstance().compileSrc(
+                contractFile,
+                true,
+                true,
+                Options.ABI,
+                Options.BIN,
+                Options.INTERFACE,
+                Options.METADATA
+        );
+        if (result.isFailed()) {
+            throw new Exception("Could not compile solidity files: " + result.errors);
         }
+
+        return result.output;
     }
 
-    private void generateJavaClass(Map<String, Map<String, String>> result, String contractName) throws IOException, ClassNotFoundException {
+    private void generateJavaClass(
+            final Map<String, Map<String, String>> result,
+            final String contractNameKey) throws IOException, ClassNotFoundException {
 
-        // create the destination repo for contracts
-        createJavaDestinationFolders();
+        final String contractName = contractNameKey.split(":")[1];
 
         new SolidityFunctionWrapper(NATIVE_JAVA_TYPE).generateJavaFiles(
                 contractName,
-                result.get(contractName).get("bin"),
-                result.get(contractName).get("abi"),
-                generatedJavaDestFolder,
-                generatedJavaPackageName);
+                result.get(contractNameKey).get("bin"),
+                result.get(contractNameKey).get("abi"),
+                getOutputs().getFiles().getSingleFile().getAbsolutePath(),
+                format(generatedJavaPackageName, contractName.toLowerCase()));
     }
-
-    private void createJavaDestinationFolders() throws IOException {
-        String currentDir = System.getProperty("user.dir");
-        String packageFolders = generatedJavaPackageName.replace(".", "/");
-        log.info("\tCreation of folders: " + currentDir + "/" + generatedJavaDestFolder + "/" + packageFolders);
-        Files.createDirectories(Paths.get(currentDir + "/" + generatedJavaDestFolder + "/" + packageFolders));
-    }
-
 
     // Getters and setters
     public String getGeneratedJavaPackageName() {
         return generatedJavaPackageName;
     }
 
-    public void setGeneratedJavaPackageName(String generatedJavaPackageName) {
+    public void setGeneratedJavaPackageName(final String generatedJavaPackageName) {
         this.generatedJavaPackageName = generatedJavaPackageName;
     }
 
-    public String getGeneratedJavaDestFolder() {
-        return generatedJavaDestFolder;
-    }
-
-    public void setGeneratedJavaDestFolder(String generatedJavaDestFolder) {
-        this.generatedJavaDestFolder = generatedJavaDestFolder;
-    }
-
-    public String getSolidityContractsFolder() {
-        return solidityContractsFolder;
-    }
-
-    public void setSolidityContractsFolder(String solidityContractsFolder) {
-        this.solidityContractsFolder = solidityContractsFolder;
-    }
 }

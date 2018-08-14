@@ -1,6 +1,8 @@
-apply plugin : 'java-gradle-plugin'
-apply plugin : 'maven'
-apply plugin : 'maven-publish'
+apply plugin: 'java-gradle-plugin'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
+version = '0.1.0.0'
 
 repositories {
     mavenCentral()
@@ -9,9 +11,9 @@ repositories {
 }
 
 dependencies {
-    compile "org.ethereum:ethereumj-core:1.7.0-RELEASE"
-    compile "org.web3j:codegen:3.2.0"
-    compile "org.apache.maven.shared:file-management:3.0.0"
+    compile 'org.web3j:codegen:3.5.0',
+            'org.ethereum:ethereumj-core:1.7.2-RELEASE',
+            'org.apache.maven.shared:file-management:3.0.0'
 
     testCompile gradleTestKit()
     testCompile 'junit:junit:4.12'
@@ -19,18 +21,18 @@ dependencies {
 
 publishing {
     publications {
-        pluginPublication (MavenPublication) {
-            from    components.java
-            groupId    "org.web3j"
-            artifactId    "web3j-gradle-plugin"
-            version    "0.1.0-SNAPSHOT"
+        pluginPublication(MavenPublication) {
+            from components.java
+            groupId 'org.web3j'
+            artifactId 'web3j-gradle-plugin'
+            version version
         }
     }
 }
 
 gradlePlugin {
     plugins {
-        web3jgradleplugin {
+        web3jGradlePlugin {
             id = 'web3j-gradle-plugin'
             implementationClass = 'org.web3j.gradleplugin.Web3jGradlePlugin'
         }

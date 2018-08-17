@@ -84,16 +84,15 @@ The properties accepted by the DSL are listed in the following table:
 | `generatedFilesBaseDir` | `String`   | `$buildDir/generated/source/web3j` | Generated code output directory. |
 
 The `generatedPackageName` may contain a indexed value between curly brackets (`{0}`),
-allowing to format the generated values using the contract name. For convenience,
-when applied to a Java package name it will be converted to lower case. Note that this is not 
-a Gradle variable and therefor should not be preceded by `$`.
+allowing to format the generated value using the contract name. For convenience,
+when applied to a Java package name it will be converted to lower case. 
 
 For instance, a `generatedPackageName` set to `${group}.{0}` in a project with group 
 `com.mycompany`, a Solidity contract named `MyToken.sol` will be generated in the package
-`com.mycompany.mytoken`.
+`com.mycompany.mytoken`. Note that this is not a Gradle property and should not be preceded by `$`.
 
-Also, some default values contain the `$group` property, which corresponds to your project artifact 
-group (e.g. `com.microsoft.cryptlet`).
+Also, the default value contains the `${group}` property, which corresponds to your project artifact 
+group (e.g. `com.mycompany`).
 
 ## Source sets
 

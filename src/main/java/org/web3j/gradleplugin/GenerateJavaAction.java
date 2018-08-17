@@ -35,13 +35,15 @@ class GenerateJavaAction implements Action<SourceSet> {
         final SoliditySourceSet soliditySourceSet = (SoliditySourceSet)
                 convention.getPlugins().get(SoliditySourceSet.NAME);
 
-        final String srcSetName = capitalize(sourceSet.getName());
+        final String srcSetName = capitalize((CharSequence) sourceSet.getName());
 
         final GenerateJavaTask task = project.getTasks().create(
                 "generate" + srcSetName + "Java", GenerateJavaTask.class);
 
         // Set the sources for the generation task
         task.setSource(soliditySourceSet.getSolidity());
+        task.setDescription(String.format("Generates web3j contract wrappers for %s source set.",
+                sourceSet.getName()));
 
         final Web3jPluginExtension extension = (Web3jPluginExtension)
                 InvokerHelper.getProperty(project, Web3jPluginExtension.NAME);

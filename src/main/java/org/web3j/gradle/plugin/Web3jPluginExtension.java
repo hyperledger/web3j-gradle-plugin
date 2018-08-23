@@ -1,4 +1,4 @@
-package org.web3j.gradleplugin;
+package org.web3j.gradle.plugin;
 
 import java.util.Objects;
 

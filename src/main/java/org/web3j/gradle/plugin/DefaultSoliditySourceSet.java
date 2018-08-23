@@ -1,4 +1,4 @@
-package org.web3j.gradleplugin;
+package org.web3j.gradle.plugin;
 
 import groovy.lang.Closure;
 import org.gradle.api.Action;

@@ -38,7 +38,7 @@ class SoliditySourceSetAction implements Action<SourceSet> {
         convention.getPlugins().put(SoliditySourceSet.NAME, soliditySourceSet);
 
         final File defaultSrcDir = new File(project.getProjectDir(),
-                "src/" + sourceSet.getName() + "/solidity");
+                "src/" + sourceSet.getName() + "/" + SoliditySourceSet.NAME);
 
         soliditySourceSet.getSolidity().srcDir(defaultSrcDir);
         sourceSet.getAllJava().source(soliditySourceSet.getSolidity());

@@ -1,8 +1,40 @@
-apply plugin: 'java-gradle-plugin'
-apply plugin: 'maven'
-apply plugin: 'maven-publish'
+plugins {
+    id 'com.jfrog.bintray' version '1.7.3'
+    id 'java-gradle-plugin'
+    id 'java'
 
-version = '0.1.0.0'
+    // Required for JFrog Artifactory repository
+    id 'jacoco'
+    id 'maven-publish'
+
+    // Required for Maven Nexus repository
+    id 'maven'
+    id 'signing'
+    id 'idea'
+    id 'com.bmuschko.nexus' version '2.3.1'
+    id 'io.codearte.nexus-staging' version '0.11.0'
+}
+
+group 'org.web3j'
+version '0.1.0'
+description = 'web3j Gradle Plugin'
+
+sourceCompatibility = 1.8
+
+jacoco {
+    toolVersion = '0.8.1' // See http://www.eclemma.org/jacoco/.
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+    }
+}
+
+ext {
+    web3jVersion = '3.5.0'
+    ethereumjVersion = '1.7.2-RELEASE'
+}
 
 repositories {
     mavenCentral()
@@ -11,30 +43,107 @@ repositories {
 }
 
 dependencies {
-    compile 'org.web3j:codegen:3.5.0',
-            'org.ethereum:ethereumj-core:1.7.2-RELEASE',
-            'org.apache.maven.shared:file-management:3.0.0'
+    compile "org.web3j:codegen:$web3jVersion",
+            "org.ethereum:ethereumj-core:$ethereumjVersion"
 
     testCompile gradleTestKit()
-    testCompile 'junit:junit:4.12'
-}
-
-publishing {
-    publications {
-        pluginPublication(MavenPublication) {
-            from components.java
-            groupId 'org.web3j'
-            artifactId 'web3j-gradle-plugin'
-            version version
-        }
-    }
 }
 
 gradlePlugin {
     plugins {
         web3jGradlePlugin {
             id = 'web3j-gradle-plugin'
-            implementationClass = 'org.web3j.gradleplugin.Web3jGradlePlugin'
+            implementationClass = 'org.web3j.gradle.plugin.Web3jGradlePlugin'
+        }
+    }
+}
+
+tasks.withType(Test) {
+    reports.html.destination file("${reporting.baseDir}/${name}")
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            groupId project.group
+            artifactId project.name
+            version project.version
+            artifact sourcesJar {
+                classifier 'sources'
+            }
+            artifact javadocJar {
+                classifier 'javadoc'
+            }
+        }
+    }
+}
+
+bintray {
+    user = project.hasProperty('bintrayUser') ?
+            project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+    key = project.hasProperty('bintrayApiKey') ?
+            project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+    publications = ['mavenJava']
+    publish = true
+    pkg {
+        repo = 'maven'
+        name = project.name
+        desc = project.description
+        userOrg = 'web3j'
+        licenses = ['Apache-2.0']
+        issueTrackerUrl = 'https://github.com/web3j/web3j-gradle-plugin/issues'
+        vcsUrl = 'https://github.com/web3j/web3j-gradle-plugin.git'
+        websiteUrl = 'http://web3j.io'
+        publicDownloadNumbers = true
+    }
+}
+
+task release {
+    dependsOn 'clean'
+    dependsOn 'build'
+    dependsOn 'uploadArchives'
+    dependsOn 'closeAndReleaseRepository'
+    dependsOn 'bintrayUpload'
+
+    tasks.findByName('build').mustRunAfter 'clean'
+    tasks.findByName('uploadArchives').mustRunAfter 'build'
+    tasks.findByName('closeAndReleaseRepository').mustRunAfter 'uploadArchives'
+    tasks.findByName('bintrayUpload').mustRunAfter 'build'
+}
+
+modifyPom {
+    project {
+        name project.description
+        description 'Gradle plugin that provides tasks generating web3j contracts from Solidity.'
+        url 'https://github.com/web3j/web3j-gradle-plugin'
+        inceptionYear '2018'
+
+        scm {
+            url 'https://github.com/web3j/web3j-gradle-plugin'
+            connection 'scm:https://github.com/web3j/web3j-gradle-plugin.git'
+            developerConnection 'scm:git://github.com/web3j/web3j-gradle-plugin.git'
+        }
+
+        licenses {
+            license {
+                name 'The Apache Software License, Version 2.0'
+                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                distribution 'repo'
+            }
+        }
+
+        developers {
+            developer {
+                id 'conor10'
+                name 'Conor Svensson'
+                email 'conor10@gmail.com'
+            }
+            developer {
+                id 'xaviarias'
+                name 'Xavi Arias'
+                email 'xavi.arias.segui@gmail.com'
+            }
         }
     }
 }

@@ -74,7 +74,7 @@ public class Web3jPlugin implements Plugin<Project> {
 
         // Set the task generated package name and classpath
         task.setGeneratedJavaPackageName(extension.getGeneratedPackageName());
-        task.setClasspath(sourceSet.getRuntimeClasspath());
+        task.setUseNativeJavaTypes(extension.getUseNativeJavaTypes());
 
         task.dependsOn(project.getTasks().withType(CompileSolidity.class)
                 .named("compile" + srcSetName + "Solidity"));

@@ -64,12 +64,6 @@ public class Web3jPluginTest {
                 "        }\n" +
                 "    }\n" +
                 "}\n" +
-                // FIXME Remove explicit dependency to web3j console
-                "dependencies {\n" +
-                "    runtimeOnly('org.web3j:console:3.5.0') {\n" +
-                "        exclude group: 'org.slf4j', module: 'slf4j-nop'\n" +
-                "    }\n" +
-                "}\n" +
                 "repositories {\n" +
                 "   mavenCentral()\n" +
                 "   mavenLocal()\n" +

@@ -41,7 +41,7 @@ repositories {
 
 dependencies {
     compile "org.web3j:solidity-gradle-plugin:$solidityPluginVersion"
-    runtimeOnly("org.web3j:console:$web3jVersion") {
+    compile("org.web3j:console:$web3jVersion") {
         exclude group: 'org.slf4j', module: 'slf4j-nop'
     }
     testCompile "junit:junit:$junitVersion"

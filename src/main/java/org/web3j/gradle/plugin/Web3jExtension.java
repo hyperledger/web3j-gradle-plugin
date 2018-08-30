@@ -29,6 +29,11 @@ public class Web3jExtension {
      */
     private String generatedFilesBaseDir;
 
+    /**
+     * Generate smart contract wrappers using native Java types.
+     */
+    private Boolean useNativeJavaTypes;
+
     public String getGeneratedPackageName() {
         return generatedPackageName;
     }
@@ -47,6 +52,14 @@ public class Web3jExtension {
         this.generatedFilesBaseDir = generatedFilesBaseDir;
     }
 
+    public Boolean getUseNativeJavaTypes() {
+        return useNativeJavaTypes;
+    }
+
+    public void setUseNativeJavaTypes(final Boolean useNativeJavaTypes) {
+        this.useNativeJavaTypes = useNativeJavaTypes;
+    }
+
     public Web3jExtension(final Project project) {
         generatedFilesBaseDir = project.getBuildDir().getAbsolutePath()
                 + "/generated/source/web3j/";
@@ -58,6 +71,8 @@ public class Web3jExtension {
         } else {
             generatedPackageName = DEFAULT_GENERATED_PACKAGE;
         }
+
+        useNativeJavaTypes = true;
     }
 
 }

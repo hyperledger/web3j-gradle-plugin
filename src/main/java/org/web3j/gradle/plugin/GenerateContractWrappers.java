@@ -1,13 +1,14 @@
 package org.web3j.gradle.plugin;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.Arrays;
 
-import org.gradle.api.file.FileCollection;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.SourceTask;
 import org.gradle.api.tasks.TaskAction;
+import org.web3j.codegen.SolidityFunctionWrapper;
+import org.web3j.utils.Files;
 
 public class GenerateContractWrappers extends SourceTask {
 
@@ -15,11 +16,11 @@ public class GenerateContractWrappers extends SourceTask {
     private String generatedJavaPackageName;
 
     @Input
-    private FileCollection classpath;
+    private Boolean useNativeJavaTypes;
 
     @TaskAction
     @SuppressWarnings("unused")
-    void generateContractWrappers() {
+    void generateContractWrappers() throws IOException, ClassNotFoundException {
         for (final File contractAbi : getSource()) {
 
             final String contractName = contractAbi.getName()
@@ -28,18 +29,14 @@ public class GenerateContractWrappers extends SourceTask {
             final String packageName = MessageFormat.format(
                     getGeneratedJavaPackageName(), contractName.toLowerCase());
 
-            final String contractDir = contractAbi.getParentFile().getAbsolutePath();
+            final File contractBin = new File(contractAbi.getParentFile(), contractName + ".bin");
+            final String outputDir = getOutputs().getFiles().getSingleFile().getAbsolutePath();
 
-            getProject().javaexec(javaExecSpec -> {
-                javaExecSpec.setMain("org.web3j.console.Runner");
-                javaExecSpec.setClasspath(getClasspath());
-                javaExecSpec.setArgs(Arrays.asList("solidity", "generate",
-                        contractDir + "/" + contractName + ".bin",
-                        contractAbi.getAbsolutePath(),
-                        "-o", getOutputs().getFiles().getSingleFile().getAbsolutePath(),
-                        "-p", packageName
-                ));
-            });
+            final SolidityFunctionWrapper wrapper =
+                    new SolidityFunctionWrapper(getUseNativeJavaTypes());
+
+            wrapper.generateJavaFiles(contractName, Files.readString(contractBin),
+                    Files.readString(contractAbi), outputDir, packageName);
         }
     }
 
@@ -52,12 +49,11 @@ public class GenerateContractWrappers extends SourceTask {
         this.generatedJavaPackageName = generatedJavaPackageName;
     }
 
-    public FileCollection getClasspath() {
-        return classpath;
+    public Boolean getUseNativeJavaTypes() {
+        return useNativeJavaTypes;
     }
 
-    public void setClasspath(final FileCollection classpath) {
-        this.classpath = classpath;
+    public void setUseNativeJavaTypes(final Boolean useNativeJavaTypes) {
+        this.useNativeJavaTypes = useNativeJavaTypes;
     }
-
 }

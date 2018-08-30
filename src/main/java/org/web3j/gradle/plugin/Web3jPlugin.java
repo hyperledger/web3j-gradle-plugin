@@ -61,14 +61,11 @@ public class Web3jPlugin implements Plugin<Project> {
         final String generateTaskName = "generate" + srcSetName + "ContractWrappers";
 
         final GenerateContractWrappers task = project.getTasks().create(
-                generateTaskName, GenerateContractWrappers.class, sourceSet);
+                generateTaskName, GenerateContractWrappers.class);
 
         // Set the sources for the generation task
-        final SourceDirectorySet directorySet = new DefaultSourceDirectorySet(
-                sourceSet.getName(), srcSetName + " Solidity ABI",
-                new IdentityFileResolver(), new DefaultDirectoryFileTreeFactory());
+        task.setSource(buildSourceDirectorySet(sourceSet));
 
-        task.setSource(directorySet.srcDir(buildOutputDir(sourceSet)));
         task.setDescription(String.format("Generates web3j contract wrappers for %s source set.",
                 sourceSet.getName()));
 
@@ -81,6 +78,18 @@ public class Web3jPlugin implements Plugin<Project> {
 
         task.dependsOn(project.getTasks().withType(CompileSolidity.class)
                 .named("compile" + srcSetName + "Solidity"));
+    }
+
+    private SourceDirectorySet buildSourceDirectorySet(final SourceSet sourceSet) {
+
+        final SourceDirectorySet directorySet = new DefaultSourceDirectorySet(
+                sourceSet.getName(), capitalize(sourceSet.getName()) + " Solidity ABI",
+                new IdentityFileResolver(), new DefaultDirectoryFileTreeFactory());
+
+        directorySet.srcDir(buildOutputDir(sourceSet));
+        directorySet.include("**/*.abi");
+
+        return directorySet;
     }
 
     private File buildSourceDir(final Web3jExtension extension, final SourceSet sourceSet) {

@@ -50,19 +50,25 @@ public class Web3jPluginTest {
 
         final String buildFileContent = "plugins {\n" +
                 // FIXME Plugin version shouldn't be specified here
-                "   id 'web3j' version '0.1.0'\n" +
+                "    id 'web3j' version '0.1.1'\n" +
                 "}\n" +
                 "web3j {\n" +
                 "    generatedPackageName = 'org.web3j.test'\n" +
                 "}\n" +
                 "sourceSets {\n" +
-                "   main {\n" +
-                "       solidity {\n" +
-                "           srcDir {" +
-                "               '" + sourceDir.getAbsolutePath() + "'\n" +
-                "           }\n" +
-                "       }\n" +
-                "   }\n" +
+                "    main {\n" +
+                "        solidity {\n" +
+                "            srcDir {" +
+                "                '" + sourceDir.getAbsolutePath() + "'\n" +
+                "            }\n" +
+                "        }\n" +
+                "    }\n" +
+                "}\n" +
+                // FIXME Remove explicit dependency to web3j console
+                "dependencies {\n" +
+                "    runtimeOnly('org.web3j:console:3.5.0') {\n" +
+                "        exclude group: 'org.slf4j', module: 'slf4j-nop'\n" +
+                "    }\n" +
                 "}\n" +
                 "repositories {\n" +
                 "   mavenCentral()\n" +

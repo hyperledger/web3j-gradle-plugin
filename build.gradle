@@ -14,7 +14,7 @@ plugins {
 }
 
 group 'org.web3j'
-version '0.1.0'
+version '0.1.1'
 description = 'web3j Gradle Plugin'
 sourceCompatibility = 1.8
 
@@ -42,7 +42,7 @@ repositories {
 dependencies {
     compile "org.web3j:solidity-gradle-plugin:$solidityPluginVersion"
     runtimeOnly("org.web3j:console:$web3jVersion") {
-        exclude group: 'org.slf4j'
+        exclude group: 'org.slf4j', module: 'slf4j-nop'
     }
     testCompile "junit:junit:$junitVersion"
 }

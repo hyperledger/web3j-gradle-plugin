@@ -28,11 +28,13 @@ public class GenerateContractWrappers extends SourceTask {
             final String packageName = MessageFormat.format(
                     getGeneratedJavaPackageName(), contractName.toLowerCase());
 
+            final String contractDir = contractAbi.getParentFile().getAbsolutePath();
+
             getProject().javaexec(javaExecSpec -> {
                 javaExecSpec.setMain("org.web3j.console.Runner");
                 javaExecSpec.setClasspath(getClasspath());
                 javaExecSpec.setArgs(Arrays.asList("solidity", "generate",
-                        contractAbi.getAbsolutePath() + "/" + contractName + ".bin",
+                        contractDir + "/" + contractName + ".bin",
                         contractAbi.getAbsolutePath(),
                         "-o", getOutputs().getFiles().getSingleFile().getAbsolutePath(),
                         "-p", packageName

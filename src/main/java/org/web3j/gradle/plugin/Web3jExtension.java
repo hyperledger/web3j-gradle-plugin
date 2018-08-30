@@ -7,7 +7,7 @@ import org.gradle.api.Project;
 /**
  * web3j extension for plugin configuration.
  */
-public class Web3jPluginExtension {
+public class Web3jExtension {
 
     /**
      * Extension name used in Gradle build files.
@@ -47,7 +47,7 @@ public class Web3jPluginExtension {
         this.generatedFilesBaseDir = generatedFilesBaseDir;
     }
 
-    public Web3jPluginExtension(final Project project) {
+    public Web3jExtension(final Project project) {
         generatedFilesBaseDir = project.getBuildDir().getAbsolutePath()
                 + "/generated/source/web3j/";
 

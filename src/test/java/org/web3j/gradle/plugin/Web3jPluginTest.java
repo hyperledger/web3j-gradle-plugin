@@ -1,10 +1,9 @@
 package org.web3j.gradle.plugin;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
@@ -18,7 +17,7 @@ import static org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class Web3jGradlePluginTest {
+public class Web3jPluginTest {
 
     @Rule
     public final TemporaryFolder testProjectDir = new TemporaryFolder();
@@ -40,19 +39,18 @@ public class Web3jGradlePluginTest {
                 "    repositories {\n" +
                 "        mavenCentral()\n" +
                 "        mavenLocal()\n" +
-                "        maven { url 'https://dl.bintray.com/ethereum/maven/' }\n" +
                 "    }\n" +
                 "}\n";
 
-        writeFile(settingsFile, settingsFileContent);
+        Files.write(settingsFile.toPath(), settingsFileContent.getBytes());
     }
 
     @Test
-    public void generateJava() throws IOException {
+    public void generateContractWrappers() throws IOException {
 
         final String buildFileContent = "plugins {\n" +
                 // FIXME Plugin version shouldn't be specified here
-                "   id 'web3j-gradle-plugin' version '0.1.0.0'\n" +
+                "   id 'web3j' version '0.1.0'\n" +
                 "}\n" +
                 "web3j {\n" +
                 "    generatedPackageName = 'org.web3j.test'\n" +
@@ -69,19 +67,18 @@ public class Web3jGradlePluginTest {
                 "repositories {\n" +
                 "   mavenCentral()\n" +
                 "   mavenLocal()\n" +
-                "   maven { url 'https://dl.bintray.com/ethereum/maven/' }\n" +
                 "}\n";
 
-        writeFile(buildFile, buildFileContent);
+        Files.write(buildFile.toPath(), buildFileContent.getBytes());
 
         final GradleRunner generateMainJava = GradleRunner.create()
                 .withProjectDir(testProjectDir.getRoot())
-                .withArguments("generateMainJava")
+                .withArguments("generateContractWrappers")
                 .forwardOutput()
                 .withDebug(true);
 
         final BuildResult success = generateMainJava.build();
-        assertEquals(SUCCESS, success.task(":generateMainJava").getOutcome());
+        assertEquals(SUCCESS, success.task(":generateContractWrappers").getOutcome());
 
         final File web3jContractsDir = new File(testProjectDir.getRoot(),
                 "build/generated/source/web3j/main/java");
@@ -92,13 +89,7 @@ public class Web3jGradlePluginTest {
         assertTrue(generatedContract.exists());
 
         final BuildResult upToDate = generateMainJava.build();
-        assertEquals(UP_TO_DATE, upToDate.task(":generateMainJava").getOutcome());
-    }
-
-    private void writeFile(File destination, String content) throws IOException {
-        try (final BufferedWriter output = new BufferedWriter(new FileWriter(destination))) {
-            output.write(content);
-        }
+        assertEquals(UP_TO_DATE, upToDate.task(":generateContractWrappers").getOutcome());
     }
 
 }

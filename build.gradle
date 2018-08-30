@@ -1,5 +1,5 @@
 plugins {
-    id 'com.jfrog.bintray' version '1.7.3'
+    id 'com.jfrog.bintray' version '1.8.4'
     id 'java-gradle-plugin'
     id 'java'
 
@@ -11,14 +11,11 @@ plugins {
     id 'maven'
     id 'signing'
     id 'idea'
-    id 'com.bmuschko.nexus' version '2.3.1'
-    id 'io.codearte.nexus-staging' version '0.11.0'
 }
 
 group 'org.web3j'
 version '0.1.0'
 description = 'web3j Gradle Plugin'
-
 sourceCompatibility = 1.8
 
 jacoco {
@@ -33,33 +30,75 @@ jacocoTestReport {
 
 ext {
     web3jVersion = '3.5.0'
-    ethereumjVersion = '1.7.2-RELEASE'
+    solidityPluginVersion = '0.1.0'
+    junitVersion = '4.12'
 }
 
 repositories {
     mavenCentral()
-    jcenter()
-    maven { url "https://dl.bintray.com/ethereum/maven/" }
+    mavenLocal()
 }
 
 dependencies {
-    compile "org.web3j:codegen:$web3jVersion",
-            "org.ethereum:ethereumj-core:$ethereumjVersion"
-
-    testCompile gradleTestKit()
+    compile "org.web3j:solidity-gradle-plugin:$solidityPluginVersion"
+    runtimeOnly("org.web3j:console:$web3jVersion") {
+        exclude group: 'org.slf4j'
+    }
+    testCompile "junit:junit:$junitVersion"
 }
 
 gradlePlugin {
     plugins {
         web3jGradlePlugin {
-            id = 'web3j-gradle-plugin'
-            implementationClass = 'org.web3j.gradle.plugin.Web3jGradlePlugin'
+            id = 'web3j'
+            implementationClass = 'org.web3j.gradle.plugin.Web3jPlugin'
         }
     }
 }
 
 tasks.withType(Test) {
     reports.html.destination file("${reporting.baseDir}/${name}")
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+def pomConfig = {
+    name project.description
+    description 'Gradle plugin providing tasks to generate web3j contracts from Solidity.'
+    url 'https://github.com/web3j/web3j-gradle-plugin'
+    inceptionYear '2018'
+    scm {
+        url 'https://github.com/web3j/web3j-gradle-plugin'
+        connection 'scm:https://github.com/web3j/web3j-gradle-plugin.git'
+        developerConnection 'scm:git://github.com/web3j/web3j-gradle-plugin.git'
+    }
+    licenses {
+        license {
+            name 'The Apache Software License, Version 2.0'
+            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            distribution 'repo'
+        }
+    }
+    developers {
+        developer {
+            id 'conor10'
+            name 'Conor Svensson'
+            email 'conor10@gmail.com'
+        }
+        developer {
+            id 'xaviarias'
+            name 'Xavi Arias'
+            email 'xavi.arias.segui@gmail.com'
+        }
+    }
 }
 
 publishing {
@@ -69,11 +108,10 @@ publishing {
             groupId project.group
             artifactId project.name
             version project.version
-            artifact sourcesJar {
-                classifier 'sources'
-            }
-            artifact javadocJar {
-                classifier 'javadoc'
+            artifact sourcesJar
+            artifact javadocJar
+            pom.withXml {
+                pomConfig
             }
         }
     }
@@ -85,6 +123,7 @@ bintray {
     key = project.hasProperty('bintrayApiKey') ?
             project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
     publications = ['mavenJava']
+    override = true
     publish = true
     pkg {
         repo = 'maven'
@@ -96,54 +135,30 @@ bintray {
         vcsUrl = 'https://github.com/web3j/web3j-gradle-plugin.git'
         websiteUrl = 'http://web3j.io'
         publicDownloadNumbers = true
+        version {
+            name = project.version
+            desc = project.description
+            vcsTag = project.version
+            released = new Date()
+            gpg {
+                sign = true
+                passphrase = project.property('signing.password')
+            }
+            mavenCentralSync {
+                sync = false
+                user = project.property('nexusUsername')
+                password = project.property('nexusPassword')
+                close = '1'
+            }
+        }
     }
 }
 
 task release {
     dependsOn 'clean'
     dependsOn 'build'
-    dependsOn 'uploadArchives'
-    dependsOn 'closeAndReleaseRepository'
     dependsOn 'bintrayUpload'
 
     tasks.findByName('build').mustRunAfter 'clean'
-    tasks.findByName('uploadArchives').mustRunAfter 'build'
-    tasks.findByName('closeAndReleaseRepository').mustRunAfter 'uploadArchives'
     tasks.findByName('bintrayUpload').mustRunAfter 'build'
-}
-
-modifyPom {
-    project {
-        name project.description
-        description 'Gradle plugin that provides tasks generating web3j contracts from Solidity.'
-        url 'https://github.com/web3j/web3j-gradle-plugin'
-        inceptionYear '2018'
-
-        scm {
-            url 'https://github.com/web3j/web3j-gradle-plugin'
-            connection 'scm:https://github.com/web3j/web3j-gradle-plugin.git'
-            developerConnection 'scm:git://github.com/web3j/web3j-gradle-plugin.git'
-        }
-
-        licenses {
-            license {
-                name 'The Apache Software License, Version 2.0'
-                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                distribution 'repo'
-            }
-        }
-
-        developers {
-            developer {
-                id 'conor10'
-                name 'Conor Svensson'
-                email 'conor10@gmail.com'
-            }
-            developer {
-                id 'xaviarias'
-                name 'Xavi Arias'
-                email 'xavi.arias.segui@gmail.com'
-            }
-        }
-    }
 }

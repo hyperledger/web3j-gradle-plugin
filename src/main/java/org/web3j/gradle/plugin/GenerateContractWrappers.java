@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 
 import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.SourceTask;
 import org.gradle.api.tasks.TaskAction;
 import org.web3j.codegen.SolidityFunctionWrapper;
@@ -16,6 +17,7 @@ public class GenerateContractWrappers extends SourceTask {
     private String generatedJavaPackageName;
 
     @Input
+    @Optional
     private Boolean useNativeJavaTypes;
 
     @TaskAction

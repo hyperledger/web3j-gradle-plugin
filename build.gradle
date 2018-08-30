@@ -145,7 +145,7 @@ bintray {
                 passphrase = project.property('signing.password')
             }
             mavenCentralSync {
-                sync = false
+                sync = true
                 user = project.property('nexusUsername')
                 password = project.property('nexusPassword')
                 close = '1'

@@ -15,6 +15,7 @@ import org.junit.rules.TemporaryFolder;
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
 import static org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class Web3jPluginTest {
@@ -64,6 +65,9 @@ public class Web3jPluginTest {
                 "        }\n" +
                 "    }\n" +
                 "}\n" +
+                "dependencies {\n" +
+                "   compile 'org.web3j:core:3.5.0'\n" +
+                "}\n" +
                 "repositories {\n" +
                 "   mavenCentral()\n" +
                 "   mavenLocal()\n" +
@@ -71,13 +75,14 @@ public class Web3jPluginTest {
 
         Files.write(buildFile.toPath(), buildFileContent.getBytes());
 
-        final GradleRunner generateMainJava = GradleRunner.create()
+        final GradleRunner gradleRunner = GradleRunner.create()
                 .withProjectDir(testProjectDir.getRoot())
-                .withArguments("generateContractWrappers")
+                .withArguments("build")
                 .forwardOutput()
                 .withDebug(true);
 
-        final BuildResult success = generateMainJava.build();
+        final BuildResult success = gradleRunner.build();
+        assertNotNull(success.task(":generateContractWrappers"));
         assertEquals(SUCCESS, success.task(":generateContractWrappers").getOutcome());
 
         final File web3jContractsDir = new File(testProjectDir.getRoot(),
@@ -88,7 +93,8 @@ public class Web3jPluginTest {
 
         assertTrue(generatedContract.exists());
 
-        final BuildResult upToDate = generateMainJava.build();
+        final BuildResult upToDate = gradleRunner.build();
+        assertNotNull(upToDate.task(":generateContractWrappers"));
         assertEquals(UP_TO_DATE, upToDate.task(":generateContractWrappers").getOutcome());
     }
 

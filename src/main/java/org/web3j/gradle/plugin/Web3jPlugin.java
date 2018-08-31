@@ -15,6 +15,7 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
+import org.gradle.api.tasks.SourceTask;
 import org.web3j.solidity.gradle.plugin.CompileSolidity;
 import org.web3j.solidity.gradle.plugin.SolidityPlugin;
 import org.web3j.solidity.gradle.plugin.SoliditySourceSet;
@@ -65,9 +66,8 @@ public class Web3jPlugin implements Plugin<Project> {
 
         // Set the sources for the generation task
         task.setSource(buildSourceDirectorySet(sourceSet));
-
-        task.setDescription(String.format("Generates web3j contract wrappers for %s source set.",
-                sourceSet.getName()));
+        task.setDescription("Generates web3j contract wrappers for "
+                + sourceSet.getName() + " source set.");
 
         // Set the task output directory
         task.getOutputs().dir(destFolder);
@@ -78,6 +78,12 @@ public class Web3jPlugin implements Plugin<Project> {
 
         task.dependsOn(project.getTasks().withType(CompileSolidity.class)
                 .named("compile" + srcSetName + "Solidity"));
+
+        final SourceTask compileJava = (SourceTask) project.getTasks()
+                .getByName("compile" + srcSetName + "Java");
+
+        compileJava.source(task.getOutputs().getFiles().getSingleFile());
+        compileJava.dependsOn(task);
     }
 
     private SourceDirectorySet buildSourceDirectorySet(final SourceSet sourceSet) {

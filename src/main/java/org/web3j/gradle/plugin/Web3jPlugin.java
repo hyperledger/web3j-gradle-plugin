@@ -51,10 +51,10 @@ public class Web3jPlugin implements Plugin<Project> {
         final Web3jExtension extension = (Web3jExtension)
                 InvokerHelper.getProperty(project, Web3jExtension.NAME);
 
-        final File destFolder = buildSourceDir(extension, sourceSet);
+        final File outputDir = buildSourceDir(extension, sourceSet);
 
         // Add source set to the project Java source sets
-        sourceSet.getJava().srcDir(destFolder);
+        sourceSet.getJava().srcDir(outputDir);
 
         final String srcSetName = sourceSet.getName().equals("main") ?
                 "" : capitalize((CharSequence) sourceSet.getName());
@@ -70,7 +70,7 @@ public class Web3jPlugin implements Plugin<Project> {
                 + sourceSet.getName() + " source set.");
 
         // Set the task output directory
-        task.getOutputs().dir(destFolder);
+        task.getOutputs().dir(outputDir);
 
         // Set the task generated package name and classpath
         task.setGeneratedJavaPackageName(extension.getGeneratedPackageName());

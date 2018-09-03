@@ -79,7 +79,7 @@ The properties accepted by the DSL are listed in the following table:
 |-------------------------|:----------:|:----------------------------------:|-------------|
 | `generatedPackageName`  | `String`   | `${group}.web3j`                   | Generated contract wrappers package. |
 | `generatedFilesBaseDir` | `String`   | `$buildDir/generated/source/web3j` | Generated Java code output directory. |
-| `useNativeJavaTypes`    | `Boolean`  | `true`                             | Generate smart contract wrappers using native Java types.. |
+| `useNativeJavaTypes`    | `Boolean`  | `true`                             | Generate smart contract wrappers using native Java types. |
 
 The `generatedPackageName` may contain a indexed value between curly brackets (`{0}`),
 allowing to format the generated value using the contract name. For convenience,

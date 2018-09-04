@@ -39,7 +39,6 @@ public class Web3jPluginTest {
         final String settingsFileContent = "pluginManagement {\n" +
                 "    repositories {\n" +
                 "        mavenCentral()\n" +
-                "        mavenLocal()\n" +
                 "    }\n" +
                 "}\n";
 

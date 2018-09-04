@@ -36,7 +36,6 @@ ext {
 
 repositories {
     mavenCentral()
-    mavenLocal()
 }
 
 dependencies {
@@ -71,10 +70,6 @@ task sourcesJar(type: Jar) {
 }
 
 def pomConfig = {
-    name project.description
-    description 'Gradle plugin providing tasks to generate web3j contracts from Solidity.'
-    url 'https://github.com/web3j/web3j-gradle-plugin'
-    inceptionYear '2018'
     scm {
         url 'https://github.com/web3j/web3j-gradle-plugin'
         connection 'scm:https://github.com/web3j/web3j-gradle-plugin.git'
@@ -111,7 +106,11 @@ publishing {
             artifact sourcesJar
             artifact javadocJar
             pom.withXml {
-                pomConfig
+                def root = asNode()
+                root.appendNode('name', project.description)
+                root.appendNode('description', 'Gradle plugin providing tasks to generate web3j contracts from Solidity.')
+                root.appendNode('url', 'https://github.com/web3j/web3j-gradle-plugin')
+                root.children().last() + pomConfig
             }
         }
     }

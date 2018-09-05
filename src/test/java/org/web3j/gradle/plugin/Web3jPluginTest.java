@@ -49,8 +49,7 @@ public class Web3jPluginTest {
     public void generateContractWrappers() throws IOException {
 
         final String buildFileContent = "plugins {\n" +
-                // FIXME Plugin version shouldn't be specified here
-                "    id 'web3j' version '0.1.1'\n" +
+                "    id 'web3j'\n" +
                 "}\n" +
                 "web3j {\n" +
                 "    generatedPackageName = 'org.web3j.test'\n" +
@@ -77,8 +76,8 @@ public class Web3jPluginTest {
         final GradleRunner gradleRunner = GradleRunner.create()
                 .withProjectDir(testProjectDir.getRoot())
                 .withArguments("build")
-                .forwardOutput()
-                .withDebug(true);
+                .withPluginClasspath()
+                .forwardOutput();
 
         final BuildResult success = gradleRunner.build();
         assertNotNull(success.task(":generateContractWrappers"));

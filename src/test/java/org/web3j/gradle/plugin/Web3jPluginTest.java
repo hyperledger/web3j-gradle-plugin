@@ -68,7 +68,6 @@ public class Web3jPluginTest {
                 "}\n" +
                 "repositories {\n" +
                 "   mavenCentral()\n" +
-                "   mavenLocal()\n" +
                 "}\n";
 
         Files.write(buildFile.toPath(), buildFileContent.getBytes());

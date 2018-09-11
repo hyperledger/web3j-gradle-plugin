@@ -49,7 +49,7 @@ public class Web3jPluginTest {
     public void generateContractWrappers() throws IOException {
 
         final String buildFileContent = "plugins {\n" +
-                "    id 'web3j'\n" +
+                "    id 'org.web3j'\n" +
                 "}\n" +
                 "web3j {\n" +
                 "    generatedPackageName = 'org.web3j.test'\n" +

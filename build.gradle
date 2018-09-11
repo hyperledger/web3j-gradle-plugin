@@ -1,4 +1,5 @@
 plugins {
+    id "com.gradle.plugin-publish" version "0.10.0"
     id 'com.jfrog.bintray' version '1.8.4'
     id 'java-gradle-plugin'
     id 'java'
@@ -48,9 +49,22 @@ dependencies {
 
 gradlePlugin {
     plugins {
-        web3jGradlePlugin {
-            id = 'web3j'
+        web3j {
+            id = 'org.web3j'
             implementationClass = 'org.web3j.gradle.plugin.Web3jPlugin'
+        }
+    }
+}
+
+pluginBundle {
+    website = 'https://web3j.io/'
+    vcsUrl = 'https://github.com/web3j/web3j-gradle-plugin'
+    description = 'Gradle plugin providing tasks to generate web3j contracts from Solidity.'
+    tags = ['solidity', 'ethereum', 'web3.js', 'web3j']
+    plugins {
+        web3j {
+            // id is captured from java-gradle-plugin configuration
+            displayName = project.description
         }
     }
 }

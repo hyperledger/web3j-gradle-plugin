@@ -136,7 +136,6 @@ bintray {
     key = project.hasProperty('bintrayApiKey') ?
             project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
     publications = ['mavenJava']
-    override = true
     publish = true
     pkg {
         repo = 'maven'

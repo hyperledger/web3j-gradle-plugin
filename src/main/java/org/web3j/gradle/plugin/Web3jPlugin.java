@@ -76,6 +76,9 @@ public class Web3jPlugin implements Plugin<Project> {
         task.setGeneratedJavaPackageName(extension.getGeneratedPackageName());
         task.setUseNativeJavaTypes(extension.getUseNativeJavaTypes());
 
+        // Set task excluded contracts
+        task.setExcludedContracts(extension.getExcludedContracts());
+
         task.dependsOn(project.getTasks().withType(CompileSolidity.class)
                 .named("compile" + srcSetName + "Solidity"));
 

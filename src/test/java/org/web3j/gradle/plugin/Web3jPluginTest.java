@@ -15,6 +15,7 @@ import org.junit.rules.TemporaryFolder;
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
 import static org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -53,6 +54,7 @@ public class Web3jPluginTest {
                 "}\n" +
                 "web3j {\n" +
                 "    generatedPackageName = 'org.web3j.test'\n" +
+                "    excludedContracts = ['Token']\n" +
                 "}\n" +
                 "sourceSets {\n" +
                 "    main {\n" +
@@ -89,6 +91,11 @@ public class Web3jPluginTest {
                 "org/web3j/test/StandardToken.java");
 
         assertTrue(generatedContract.exists());
+
+        final File excludedContract = new File(web3jContractsDir,
+                "org/web3j/test/Token.java");
+
+        assertFalse(excludedContract.exists());
 
         final BuildResult upToDate = gradleRunner.build();
         assertNotNull(upToDate.task(":generateContractWrappers"));

@@ -3,6 +3,7 @@ package org.web3j.gradle.plugin;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.List;
 
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
@@ -20,6 +21,10 @@ public class GenerateContractWrappers extends SourceTask {
     @Optional
     private Boolean useNativeJavaTypes;
 
+    @Input
+    @Optional
+    private List<String> excludedContracts;
+
     @TaskAction
     @SuppressWarnings("unused")
     void generateContractWrappers() throws IOException, ClassNotFoundException {
@@ -28,17 +33,19 @@ public class GenerateContractWrappers extends SourceTask {
             final String contractName = contractAbi.getName()
                     .replaceAll("\\.abi", "");
 
-            final String packageName = MessageFormat.format(
-                    getGeneratedJavaPackageName(), contractName.toLowerCase());
+            if (excludedContracts == null || !excludedContracts.contains(contractName)) {
+                final String packageName = MessageFormat.format(
+                        getGeneratedJavaPackageName(), contractName.toLowerCase());
 
-            final File contractBin = new File(contractAbi.getParentFile(), contractName + ".bin");
-            final String outputDir = getOutputs().getFiles().getSingleFile().getAbsolutePath();
+                final File contractBin = new File(contractAbi.getParentFile(), contractName + ".bin");
+                final String outputDir = getOutputs().getFiles().getSingleFile().getAbsolutePath();
 
-            final SolidityFunctionWrapper wrapper =
-                    new SolidityFunctionWrapper(getUseNativeJavaTypes());
+                final SolidityFunctionWrapper wrapper =
+                        new SolidityFunctionWrapper(getUseNativeJavaTypes());
 
-            wrapper.generateJavaFiles(contractName, Files.readString(contractBin),
-                    Files.readString(contractAbi), outputDir, packageName);
+                wrapper.generateJavaFiles(contractName, Files.readString(contractBin),
+                        Files.readString(contractAbi), outputDir, packageName);
+            }
         }
     }
 
@@ -58,4 +65,13 @@ public class GenerateContractWrappers extends SourceTask {
     public void setUseNativeJavaTypes(final Boolean useNativeJavaTypes) {
         this.useNativeJavaTypes = useNativeJavaTypes;
     }
+
+    public List<String> getExcludedContracts() {
+        return excludedContracts;
+    }
+
+    public void setExcludedContracts(final List<String> excludedContracts) {
+        this.excludedContracts = excludedContracts;
+    }
+
 }

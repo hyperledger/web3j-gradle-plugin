@@ -1,5 +1,7 @@
 package org.web3j.gradle.plugin;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import org.gradle.api.Project;
@@ -34,6 +36,11 @@ public class Web3jExtension {
      */
     private Boolean useNativeJavaTypes;
 
+    /**
+     * Excluded contract names from wrapper generation.
+     */
+    private List<String> excludedContracts;
+
     public String getGeneratedPackageName() {
         return generatedPackageName;
     }
@@ -60,6 +67,14 @@ public class Web3jExtension {
         this.useNativeJavaTypes = useNativeJavaTypes;
     }
 
+    public List<String> getExcludedContracts() {
+        return excludedContracts;
+    }
+
+    public void setExcludedContracts(final List<String> excludedContracts) {
+        this.excludedContracts = excludedContracts;
+    }
+
     public Web3jExtension(final Project project) {
         generatedFilesBaseDir = project.getBuildDir().getAbsolutePath()
                 + "/generated/source/web3j";
@@ -73,6 +88,7 @@ public class Web3jExtension {
         }
 
         useNativeJavaTypes = true;
+        excludedContracts = new ArrayList<>();
     }
 
 }

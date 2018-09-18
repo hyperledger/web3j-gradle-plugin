@@ -1,5 +1,7 @@
 package org.web3j.gradle.plugin;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import org.gradle.api.Project;
@@ -7,7 +9,7 @@ import org.gradle.api.Project;
 /**
  * web3j extension for plugin configuration.
  */
-public class Web3jPluginExtension {
+public class Web3jExtension {
 
     /**
      * Extension name used in Gradle build files.
@@ -29,6 +31,16 @@ public class Web3jPluginExtension {
      */
     private String generatedFilesBaseDir;
 
+    /**
+     * Generate smart contract wrappers using native Java types.
+     */
+    private Boolean useNativeJavaTypes;
+
+    /**
+     * Excluded contract names from wrapper generation.
+     */
+    private List<String> excludedContracts;
+
     public String getGeneratedPackageName() {
         return generatedPackageName;
     }
@@ -47,9 +59,25 @@ public class Web3jPluginExtension {
         this.generatedFilesBaseDir = generatedFilesBaseDir;
     }
 
-    public Web3jPluginExtension(final Project project) {
+    public Boolean getUseNativeJavaTypes() {
+        return useNativeJavaTypes;
+    }
+
+    public void setUseNativeJavaTypes(final Boolean useNativeJavaTypes) {
+        this.useNativeJavaTypes = useNativeJavaTypes;
+    }
+
+    public List<String> getExcludedContracts() {
+        return excludedContracts;
+    }
+
+    public void setExcludedContracts(final List<String> excludedContracts) {
+        this.excludedContracts = excludedContracts;
+    }
+
+    public Web3jExtension(final Project project) {
         generatedFilesBaseDir = project.getBuildDir().getAbsolutePath()
-                + "/generated/source/web3j/";
+                + "/generated/source/web3j";
 
         // Use the project's group name in generated package
         final String projectGroup = project.getGroup().toString();
@@ -58,6 +86,9 @@ public class Web3jPluginExtension {
         } else {
             generatedPackageName = DEFAULT_GENERATED_PACKAGE;
         }
+
+        useNativeJavaTypes = true;
+        excludedContracts = new ArrayList<>();
     }
 
 }

@@ -5,7 +5,7 @@ Simple Gradle plugin for [web3j](https://web3j.io/). This plugin is under develo
 
 ## Plugin configuration
 
-Before you start, you will need to install the 
+Before you start, you will need to install the
 [Solidity compiler](https://solidity.readthedocs.io/en/latest/installing-solidity.html)
 if is not already installed in your computer.
 
@@ -21,9 +21,11 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.web3j:web3j-gradle-plugin:0.1.0.0'
+        classpath 'org.web3j:web3j-gradle-plugin:0.1.1'
     }
 }
+
+apply plugin: 'web3j'
 ```
 
 ### Using the plugins DSL
@@ -33,7 +35,7 @@ build file:
 
 ```groovy
 plugins {
-    id 'web3j-gradle-plugin' version '0.1.0.0'
+    id 'web3j' version '0.1.1'
 }
 ```
 
@@ -45,9 +47,6 @@ pluginManagement {
     repositories {
         mavenCentral()
         gradlePluginPortal()
-        maven { 
-            url 'https://dl.bintray.com/ethereum/maven/' 
-        }
     }
 }
 ```
@@ -55,15 +54,12 @@ pluginManagement {
 Then run this command from your project containing Solidity contracts:
 
 ```
-./gradlew generateMainJava
-``` 
-
-The `generate[SourceSet]Java` task is the entry point of the web3j Plugin, 
-and its execution will trigger the code generation tasks.
+./gradlew build
+```
 
 After applying the plugin, the base directory for generated code (by default 
 `$buildDir/generated/source/web3j`) will contain a directory for each source set 
-(by default `main` and `test`), and each of those a directory with the `java` code.
+(by default `main` and `test`) containing the smart contract wrappers Java classes.
 
 ## Code generation
 
@@ -73,6 +69,7 @@ The `web3j` DSL allows to configure the generated code, e.g.:
 web3j {
     generatedPackageName = 'com.mycompany.{0}'
     generatedFilesBaseDir = "$buildDir/custom/destination"
+    useNativeJavaTypes = false
 }
 ```
 
@@ -80,8 +77,9 @@ The properties accepted by the DSL are listed in the following table:
 
 |  Name                   | Type       | Default value                      | Description |
 |-------------------------|:----------:|:----------------------------------:|-------------|
-| `generatedPackageName`  | `String`   | `${group}.web3j`                   | Generated web3j contracts package. |
-| `generatedFilesBaseDir` | `String`   | `$buildDir/generated/source/web3j` | Generated code output directory. |
+| `generatedPackageName`  | `String`   | `${group}.web3j`                   | Generated contract wrappers package. |
+| `generatedFilesBaseDir` | `String`   | `$buildDir/generated/source/web3j` | Generated Java code output directory. |
+| `useNativeJavaTypes`    | `Boolean`  | `true`                             | Generate smart contract wrappers using native Java types. |
 
 The `generatedPackageName` may contain a indexed value between curly brackets (`{0}`),
 allowing to format the generated value using the contract name. For convenience,
@@ -111,18 +109,23 @@ sourceSets {
 }
 ```
 
-Output directories for generated Java code will be added to your build automatically.
+Check the [Solidity Plugin](https://github.com/web3j/solidity-gradle-plugin)
+documentation to configure the smart contracts source code directories.
+
+Output directories for generated smart contract wrappers Java code 
+will be added to your build automatically.
 
 ## Plugin tasks
 
-The Cryptlet plugin relies on the [Java Plugin](https://docs.gradle.org/current/userguide/java_plugin.html),
-which adds tasks to your project build using a naming convention on a per source set basis.
+The [Java Plugin](https://docs.gradle.org/current/userguide/java_plugin.html)
+adds tasks to your project build using a naming convention on a per source set basis
+(i.e. `compileJava`, `compileTestJava`).
 
-In the same way, the web3j plugin will add the `generate[Name]Java` task to your project build,
-where `Name` corresponds to the capitalized source set name, by default `main` and `test`.
+Similarly, the Solidity plugin will add the `generateContractWrappers` task for the project `main`
+source set, and a `compile[SourceSet]Solidity` for each remaining source set (e.g. `test`). 
 
 To obtain a list and description of all added tasks, run the command:
 
 ```
-../gradlew tasks --all
+./gradlew tasks --all
 ```

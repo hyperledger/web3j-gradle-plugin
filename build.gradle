@@ -15,7 +15,7 @@ plugins {
 }
 
 group 'org.web3j'
-version '0.1.2'
+version '0.1.3'
 description = 'web3j Gradle Plugin'
 sourceCompatibility = 1.8
 

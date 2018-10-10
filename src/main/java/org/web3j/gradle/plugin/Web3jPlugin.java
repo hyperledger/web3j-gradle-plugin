@@ -16,7 +16,7 @@ import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.SourceTask;
-import org.web3j.solidity.gradle.plugin.CompileSolidity;
+import org.web3j.solidity.gradle.plugin.SolidityCompile;
 import org.web3j.solidity.gradle.plugin.SolidityPlugin;
 import org.web3j.solidity.gradle.plugin.SoliditySourceSet;
 
@@ -79,7 +79,7 @@ public class Web3jPlugin implements Plugin<Project> {
         // Set task excluded contracts
         task.setExcludedContracts(extension.getExcludedContracts());
 
-        task.dependsOn(project.getTasks().withType(CompileSolidity.class)
+        task.dependsOn(project.getTasks().withType(SolidityCompile.class)
                 .named("compile" + srcSetName + "Solidity"));
 
         final SourceTask compileJava = (SourceTask) project.getTasks()

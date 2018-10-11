@@ -15,7 +15,7 @@ plugins {
 }
 
 group 'org.web3j'
-version '0.1.3'
+version '0.1.4'
 description = 'web3j Gradle Plugin'
 sourceCompatibility = 1.8
 
@@ -30,7 +30,7 @@ jacocoTestReport {
 }
 
 ext {
-    web3jVersion = '3.5.0'
+    web3jVersion = '3.6.0'
     solidityPluginVersion = '0.1.2'
     junitVersion = '4.12'
 }
@@ -104,7 +104,7 @@ def pomConfig = {
         }
         developer {
             id 'xaviarias'
-            name 'Xavi Arias'
+            name 'Xavier Arias'
             email 'xavi.arias.segui@gmail.com'
         }
     }

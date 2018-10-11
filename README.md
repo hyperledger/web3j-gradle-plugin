@@ -21,7 +21,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.web3j:web3j-gradle-plugin:0.1.1'
+        classpath 'org.web3j:web3j-gradle-plugin:0.1.4'
     }
 }
 
@@ -35,7 +35,7 @@ build file:
 
 ```groovy
 plugins {
-    id 'web3j' version '0.1.1'
+    id 'org.web3j' version '0.1.4'
 }
 ```
 
@@ -69,6 +69,7 @@ The `web3j` DSL allows to configure the generated code, e.g.:
 web3j {
     generatedPackageName = 'com.mycompany.{0}'
     generatedFilesBaseDir = "$buildDir/custom/destination"
+    excludedContracts = ['Ownable']
     useNativeJavaTypes = false
 }
 ```
@@ -79,6 +80,7 @@ The properties accepted by the DSL are listed in the following table:
 |-------------------------|:----------:|:----------------------------------:|-------------|
 | `generatedPackageName`  | `String`   | `${group}.web3j`                   | Generated contract wrappers package. |
 | `generatedFilesBaseDir` | `String`   | `$buildDir/generated/source/web3j` | Generated Java code output directory. |
+| `excludedContracts`     | `Array`    | `String[]`                         | Excluded contract names from wrapper generation. |
 | `useNativeJavaTypes`    | `Boolean`  | `true`                             | Generate smart contract wrappers using native Java types. |
 
 The `generatedPackageName` may contain a indexed value between curly brackets (`{0}`),

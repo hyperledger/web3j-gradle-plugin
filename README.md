@@ -1,7 +1,7 @@
 web3j Gradle Plugin
 ===================
 
-Simple Gradle plugin for [web3j](https://web3j.io/). This plugin is under development and not stable.
+Simple Gradle plugin for [web3j](https://web3j.io/).
 
 ## Plugin configuration
 

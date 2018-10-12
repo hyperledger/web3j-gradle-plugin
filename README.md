@@ -1,7 +1,7 @@
 web3j Gradle Plugin
 ===================
 
-Simple Gradle plugin for [web3j](https://web3j.io/). This plugin is under development and not stable.
+Simple Gradle plugin for [web3j](https://web3j.io/).
 
 ## Plugin configuration
 
@@ -80,7 +80,7 @@ The properties accepted by the DSL are listed in the following table:
 |-------------------------|:----------:|:----------------------------------:|-------------|
 | `generatedPackageName`  | `String`   | `${group}.web3j`                   | Generated contract wrappers package. |
 | `generatedFilesBaseDir` | `String`   | `$buildDir/generated/source/web3j` | Generated Java code output directory. |
-| `excludedContracts`     | `Array`    | `String[]`                         | Excluded contract names from wrapper generation. |
+| `excludedContracts`     | `String[]` | `[]`                               | Excluded contract names from wrapper generation. |
 | `useNativeJavaTypes`    | `Boolean`  | `true`                             | Generate smart contract wrappers using native Java types. |
 
 The `generatedPackageName` may contain a indexed value between curly brackets (`{0}`),
@@ -124,7 +124,7 @@ adds tasks to your project build using a naming convention on a per source set b
 (i.e. `compileJava`, `compileTestJava`).
 
 Similarly, the Solidity plugin will add the `generateContractWrappers` task for the project `main`
-source set, and a `compile[SourceSet]Solidity` for each remaining source set (e.g. `test`). 
+source set, and a `generate[SourceSet]ContractWrappers` for each remaining source set (e.g. `test`). 
 
 To obtain a list and description of all added tasks, run the command:
 

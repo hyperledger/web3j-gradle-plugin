@@ -35,23 +35,11 @@ build file:
 
 ```groovy
 plugins {
-    id 'org.web3j' version '0.1.4'
+    id 'org.web3j' version '0.1.5'
 }
 ```
 
-You will need to add the following configuration in the first line of your `settings.gradle` 
-file to resolve the artifact from the Epiphyte repository.
-
-```groovy
-pluginManagement {
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
-```
-
-Then run this command from your project containing Solidity contracts:
+Then run your project containing Solidity contracts:
 
 ```
 ./gradlew build

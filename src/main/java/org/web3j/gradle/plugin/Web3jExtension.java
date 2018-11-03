@@ -16,7 +16,7 @@ public class Web3jExtension {
      */
     static final String NAME = "web3j";
 
-    private static final String DEFAULT_GENERATED_PACKAGE = "org.web3j.model";
+    private static final String DEFAULT_GENERATED_PACKAGE = "org.web3j.{0}";
 
     /**
      * Generated package name for web3j contract wrappers.

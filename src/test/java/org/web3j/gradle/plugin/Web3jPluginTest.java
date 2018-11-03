@@ -56,9 +56,6 @@ public class Web3jPluginTest {
                 "        }\n" +
                 "    }\n" +
                 "}\n" +
-                "dependencies {\n" +
-                "   compile 'org.web3j:core:3.6.0'\n" +
-                "}\n" +
                 "repositories {\n" +
                 "   mavenCentral()\n" +
                 "}\n";

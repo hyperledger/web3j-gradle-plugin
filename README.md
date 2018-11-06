@@ -1,7 +1,9 @@
 web3j Gradle Plugin
 ===================
 
-Simple Gradle plugin for [web3j](https://web3j.io/).
+Gradle plugin that generates [web3j](https://web3j.io/) Java wrappers from Solidity smart contracts.
+It smoothly integrates with your project's build lifecycle by adding specific tasks that can be also
+run independently.
 
 ## Plugin configuration
 
@@ -21,7 +23,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.web3j:web3j-gradle-plugin:0.1.4'
+        classpath 'org.web3j:web3j-gradle-plugin:0.1.6'
     }
 }
 

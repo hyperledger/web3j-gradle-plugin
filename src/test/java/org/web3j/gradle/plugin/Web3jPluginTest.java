@@ -35,15 +35,6 @@ public class Web3jPluginTest {
                 .getResource("solidity/StandardToken.sol");
 
         sourceDir = new File(resource.getFile()).getParentFile();
-
-        final File settingsFile = testProjectDir.newFile("settings.gradle");
-        final String settingsFileContent = "pluginManagement {\n" +
-                "    repositories {\n" +
-                "        mavenCentral()\n" +
-                "    }\n" +
-                "}\n";
-
-        Files.write(settingsFile.toPath(), settingsFileContent.getBytes());
     }
 
     @Test
@@ -64,9 +55,6 @@ public class Web3jPluginTest {
                 "            }\n" +
                 "        }\n" +
                 "    }\n" +
-                "}\n" +
-                "dependencies {\n" +
-                "   compile 'org.web3j:core:3.6.0'\n" +
                 "}\n" +
                 "repositories {\n" +
                 "   mavenCentral()\n" +

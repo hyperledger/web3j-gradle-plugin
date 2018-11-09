@@ -1,7 +1,9 @@
 web3j Gradle Plugin
 ===================
 
-Simple Gradle plugin for [web3j](https://web3j.io/).
+Gradle plugin that generates [web3j](https://web3j.io/) Java wrappers from Solidity smart contracts.
+It smoothly integrates with your project's build lifecycle by adding specific tasks that can be also
+run independently.
 
 ## Plugin configuration
 
@@ -21,7 +23,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.web3j:web3j-gradle-plugin:0.1.4'
+        classpath 'org.web3j:web3j-gradle-plugin:0.1.6'
     }
 }
 
@@ -35,23 +37,11 @@ build file:
 
 ```groovy
 plugins {
-    id 'org.web3j' version '0.1.4'
+    id 'org.web3j' version '0.1.6'
 }
 ```
 
-You will need to add the following configuration in the first line of your `settings.gradle` 
-file to resolve the artifact from the Epiphyte repository.
-
-```groovy
-pluginManagement {
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
-```
-
-Then run this command from your project containing Solidity contracts:
+Then run your project containing Solidity contracts:
 
 ```
 ./gradlew build
@@ -76,23 +66,27 @@ web3j {
 
 The properties accepted by the DSL are listed in the following table: 
 
-|  Name                   | Type       | Default value                      | Description |
-|-------------------------|:----------:|:----------------------------------:|-------------|
-| `generatedPackageName`  | `String`   | `${group}.web3j`                   | Generated contract wrappers package. |
-| `generatedFilesBaseDir` | `String`   | `$buildDir/generated/source/web3j` | Generated Java code output directory. |
-| `excludedContracts`     | `String[]` | `[]`                               | Excluded contract names from wrapper generation. |
-| `useNativeJavaTypes`    | `Boolean`  | `true`                             | Generate smart contract wrappers using native Java types. |
+|  Name                   | Type       | Default value                       | Description |
+|-------------------------|:----------:|:-----------------------------------:|-------------|
+| `generatedPackageName`  | `String`   | `${group}.web3j` or `org.web3j.{0}` | Generated contract wrappers package. |
+| `generatedFilesBaseDir` | `String`   | `$buildDir/generated/source/web3j`  | Generated Java code output directory. |
+| `excludedContracts`     | `String[]` | `[]`                                | Excluded contract names from wrapper generation. |
+| `useNativeJavaTypes`    | `Boolean`  | `true`                              | Generate smart contract wrappers using native Java types. |
 
-The `generatedPackageName` may contain a indexed value between curly brackets (`{0}`),
+The `generatedPackageName` is evaluated as a [message format](https://docs.oracle.com/javase/6/docs/api/index.html?java/text/MessageFormat.html) 
+string accepting a single parameter between curly brackets (`{0}`),
 allowing to format the generated value using the contract name. For convenience,
 when applied to a Java package name it will be converted to lower case. 
 
 For instance, a `generatedPackageName` set to `${group}.{0}` in a project with group 
 `com.mycompany`, a Solidity contract named `MyToken.sol` will be generated in the package
-`com.mycompany.mytoken`. Note that this is not a Gradle property and should not be preceded by `$`.
+`com.mycompany.mytoken`.
 
 Also, the default value contains the `${group}` property, which corresponds to your project artifact 
-group (e.g. `com.mycompany`).
+group (e.g. `com.mycompany`). If the project does not define a `group` property, the generated package
+name will be `org.web3j.{0}`.
+
+Note that message format parameters are not Gradle properties and should not be preceded by `$`.
 
 ## Source sets
 

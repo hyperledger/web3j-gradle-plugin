@@ -194,7 +194,7 @@ bintray {
     publish = true
     pkg {
         repo = 'maven'
-        name = 'org.web3j'
+        name = project.name
         desc = project.description
         userOrg = 'web3j'
         licenses = ['Apache-2.0']

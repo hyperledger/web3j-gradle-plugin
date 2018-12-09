@@ -16,7 +16,7 @@ cache:
 
 stages:
 - build
-- test
+#- test
 - deploy
 
 build:
@@ -24,10 +24,11 @@ build:
   script:
   - ./gradlew clean build -x test
 
+# Unit tests are disabled as solidity (solc) is not available in gitlab-ci.
 unit tests:
   stage: test
   script:
-  - ./gradlew test --debug
+  - ./gradlew test
 
 publish_snapshot:
   stage: deploy

@@ -30,7 +30,7 @@ public class Web3jPluginTest {
     private File buildFile;
     private File sourceDir;
 
-    private String projectVersion = "";
+    private String projectVersion = "4.0.3";
 
     @Before
     public void setup() throws IOException {
@@ -40,11 +40,6 @@ public class Web3jPluginTest {
                 .getResource("solidity/StandardToken.sol");
 
         sourceDir = new File(resource.getFile()).getParentFile();
-
-        final File gradlePropsFile = new File(getClass().getClassLoader().getResource("gradle.properties").getFile());
-        final List<String> gradlePropsLines = Files.readAllLines(gradlePropsFile.toPath());
-        final Map<String, String> gradlePropsMap = gradlePropsLines.stream().map(s -> s.split("=")).collect(Collectors.toMap(a -> a[0], b -> b[1]));
-        projectVersion = gradlePropsMap.get("version");
     }
 
     @Test

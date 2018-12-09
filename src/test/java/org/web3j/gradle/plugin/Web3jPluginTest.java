@@ -41,9 +41,9 @@ public class Web3jPluginTest {
 
         sourceDir = new File(resource.getFile()).getParentFile();
 
-        final File gradlePropsFile = new File("gradle.properties");
+        final File gradlePropsFile = new File(getClass().getClassLoader().getResource("gradle.properties").getFile());
         final List<String> gradlePropsLines = Files.readAllLines(gradlePropsFile.toPath());
-        final Map<String, String> gradlePropsMap = gradlePropsLines.stream().map(s -> s.split("=")).collect(Collectors.toMap(a -> a[0], b-> b[1]));
+        final Map<String, String> gradlePropsMap = gradlePropsLines.stream().map(s -> s.split("=")).collect(Collectors.toMap(a -> a[0], b -> b[1]));
         projectVersion = gradlePropsMap.get("version");
     }
 

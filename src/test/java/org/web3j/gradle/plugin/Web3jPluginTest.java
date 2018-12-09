@@ -1,16 +1,19 @@
 package org.web3j.gradle.plugin;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
-
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
 import static org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE;
@@ -27,6 +30,8 @@ public class Web3jPluginTest {
     private File buildFile;
     private File sourceDir;
 
+    private String projectVersion = "";
+
     @Before
     public void setup() throws IOException {
         buildFile = testProjectDir.newFile("build.gradle");
@@ -35,11 +40,15 @@ public class Web3jPluginTest {
                 .getResource("solidity/StandardToken.sol");
 
         sourceDir = new File(resource.getFile()).getParentFile();
+
+        final File gradlePropsFile = new File("gradle.properties");
+        final List<String> gradlePropsLines = Files.readAllLines(gradlePropsFile.toPath());
+        final Map<String, String> gradlePropsMap = gradlePropsLines.stream().map(s -> s.split("=")).collect(Collectors.toMap(a -> a[0], b-> b[1]));
+        projectVersion = gradlePropsMap.get("version");
     }
 
     @Test
     public void generateContractWrappers() throws IOException {
-
         final String buildFileContent = "plugins {\n" +
                 "    id 'org.web3j'\n" +
                 "}\n" +
@@ -55,6 +64,9 @@ public class Web3jPluginTest {
                 "            }\n" +
                 "        }\n" +
                 "    }\n" +
+                "}\n" +
+                "dependencies {\n" +
+                "   compile 'org.web3j:core:" + projectVersion + "'\n" +
                 "}\n" +
                 "repositories {\n" +
                 "   mavenCentral()\n" +

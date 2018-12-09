@@ -27,7 +27,7 @@ build:
 unit tests:
   stage: test
   script:
-  - ./gradlew test
+  - ./gradlew test --debug
 
 publish_snapshot:
   stage: deploy

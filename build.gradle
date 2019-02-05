@@ -99,6 +99,14 @@ publishing {
         mavenJava(MavenPublication) {
             from components.java
 
+            artifact sourcesJar {
+                classifier 'sources'
+            }
+
+            artifact javadocJar {
+                classifier 'javadoc'
+            }
+
             pom {
                 name = project.name
                 description = project.description
@@ -194,7 +202,7 @@ bintray {
     publish = true
     pkg {
         repo = 'maven'
-        name = project.name
+        name = 'web3j-gradle-plugin'
         desc = project.description
         userOrg = 'web3j'
         licenses = ['Apache-2.0']

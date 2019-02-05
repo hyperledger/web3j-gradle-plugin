@@ -27,7 +27,7 @@ buildscript {
     }
 }
 
-apply plugin: 'web3j'
+apply plugin: 'org.web3j'
 ```
 
 ### Using the plugins DSL

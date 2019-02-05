@@ -1,19 +1,16 @@
 package org.web3j.gradle.plugin;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
 import static org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE;
@@ -29,8 +26,6 @@ public class Web3jPluginTest {
 
     private File buildFile;
     private File sourceDir;
-
-    private String projectVersion = "4.0.3";
 
     @Before
     public void setup() throws IOException {

@@ -29,7 +29,7 @@ jacocoTestReport {
 }
 
 ext {
-    web3jVersion = '4.0.3'
+    web3jVersion = version
     solidityPluginVersion = '0.1.2'
     junitVersion = '4.12'
 

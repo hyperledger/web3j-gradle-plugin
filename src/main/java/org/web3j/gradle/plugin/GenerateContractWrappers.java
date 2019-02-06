@@ -1,18 +1,22 @@
 package org.web3j.gradle.plugin;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.SourceTask;
 import org.gradle.api.tasks.TaskAction;
+import org.gradle.workers.IsolationMode;
+import org.gradle.workers.WorkerExecutor;
 import org.web3j.codegen.SolidityFunctionWrapper;
-import org.web3j.utils.Files;
 
 public class GenerateContractWrappers extends SourceTask {
+
+    private final WorkerExecutor executor;
 
     @Input
     private String generatedJavaPackageName;
@@ -25,9 +29,17 @@ public class GenerateContractWrappers extends SourceTask {
     @Optional
     private List<String> excludedContracts;
 
+    @Inject
+    public GenerateContractWrappers(final WorkerExecutor executor) {
+        this.executor = executor;
+    }
+
     @TaskAction
     @SuppressWarnings("unused")
-    void generateContractWrappers() throws IOException, ClassNotFoundException {
+    void generateContractWrappers() {
+
+        final String outputDir = getOutputs().getFiles().getSingleFile().getAbsolutePath();
+
         for (final File contractAbi : getSource()) {
 
             final String contractName = contractAbi.getName()
@@ -38,13 +50,13 @@ public class GenerateContractWrappers extends SourceTask {
                         getGeneratedJavaPackageName(), contractName.toLowerCase());
 
                 final File contractBin = new File(contractAbi.getParentFile(), contractName + ".bin");
-                final String outputDir = getOutputs().getFiles().getSingleFile().getAbsolutePath();
 
-                final SolidityFunctionWrapper wrapper =
-                        new SolidityFunctionWrapper(getUseNativeJavaTypes());
-
-                wrapper.generateJavaFiles(contractName, Files.readString(contractBin),
-                        Files.readString(contractAbi), outputDir, packageName);
+                executor.submit(GenerateContractWrapper.class, configuration -> {
+                    configuration.setIsolationMode(IsolationMode.NONE);
+                    configuration.setParams(contractName, contractBin,
+                            contractAbi, outputDir, packageName,
+                            getUseNativeJavaTypes());
+                });
             }
         }
     }
@@ -73,5 +85,6 @@ public class GenerateContractWrappers extends SourceTask {
     public void setExcludedContracts(final List<String> excludedContracts) {
         this.excludedContracts = excludedContracts;
     }
+
 
 }

@@ -14,12 +14,11 @@ plugins {
     id 'idea'
 }
 
-
-description = 'gradle plugin providing tasks to generate web3j contracts from Solidity.'
+description = 'Gradle plugin providing tasks to generate web3j contracts from Solidity.'
 sourceCompatibility = 1.8
 
 jacoco {
-    toolVersion = '0.8.1' // See http://www.eclemma.org/jacoco/.
+    toolVersion = '0.8.2' // See http://www.eclemma.org/jacoco/.
 }
 
 jacocoTestReport {

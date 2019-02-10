@@ -1,5 +1,5 @@
 plugins {
-    id "com.gradle.plugin-publish" version "0.10.0"
+    id 'com.gradle.plugin-publish' version '0.10.1'
     id 'com.jfrog.bintray' version '1.8.4'
     id 'java-gradle-plugin'
     id 'java'
@@ -29,7 +29,7 @@ jacocoTestReport {
 
 ext {
     web3jVersion = version
-    solidityPluginVersion = '0.1.2'
+    solidityPluginVersion = '0.1.3'
     junitVersion = '4.12'
 
     ossrhUsername = project.hasProperty('ossrhUsername') ? project.property('ossrhUsername') : System.getenv('OSSRH_USERNAME')

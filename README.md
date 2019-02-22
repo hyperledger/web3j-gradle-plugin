@@ -23,7 +23,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.web3j:web3j-gradle-plugin:4.0.3'
+        classpath 'org.web3j:web3j-gradle-plugin:4.1.1'
     }
 }
 

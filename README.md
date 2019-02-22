@@ -37,7 +37,7 @@ build file:
 
 ```groovy
 plugins {
-    id 'org.web3j' version '4.0.3'
+    id 'org.web3j' version '4.1.1'
 }
 ```
 

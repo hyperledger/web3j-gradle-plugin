@@ -7,9 +7,6 @@ import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.file.SourceDirectorySet;
-import org.gradle.api.internal.file.DefaultSourceDirectorySet;
-import org.gradle.api.internal.file.IdentityFileResolver;
-import org.gradle.api.internal.file.collections.DefaultDirectoryFileTreeFactory;
 import org.gradle.api.plugins.Convention;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
@@ -27,11 +24,13 @@ import static org.codehaus.groovy.runtime.StringGroovyMethods.capitalize;
  */
 public class Web3jPlugin implements Plugin<Project> {
 
+    public static final String ID = "org.web3j";
+
     public void apply(final Project target) {
         target.getPluginManager().apply(JavaPlugin.class);
         target.getPluginManager().apply(SolidityPlugin.class);
         target.getExtensions().create(Web3jExtension.NAME, Web3jExtension.class, target);
-        target.getDependencies().add("implementation", "org.web3j:core:4.0.3");
+        target.getDependencies().add("implementation", "org.web3j:core:4.1.1");
 
         final SourceSetContainer sourceSets = target.getConvention()
                 .getPlugin(JavaPluginConvention.class).getSourceSets();
@@ -66,7 +65,7 @@ public class Web3jPlugin implements Plugin<Project> {
                 generateTaskName, GenerateContractWrappers.class);
 
         // Set the sources for the generation task
-        task.setSource(buildSourceDirectorySet(sourceSet));
+        task.setSource(buildSourceDirectorySet(project, sourceSet));
         task.setDescription("Generates web3j contract wrappers for "
                 + sourceSet.getName() + " source set.");
 
@@ -90,11 +89,13 @@ public class Web3jPlugin implements Plugin<Project> {
         compileJava.dependsOn(task);
     }
 
-    private SourceDirectorySet buildSourceDirectorySet(final SourceSet sourceSet) {
+    private SourceDirectorySet buildSourceDirectorySet(
+            final Project project, final SourceSet sourceSet) {
 
-        final SourceDirectorySet directorySet = new DefaultSourceDirectorySet(
-                sourceSet.getName(), capitalize(sourceSet.getName()) + " Solidity ABI",
-                new IdentityFileResolver(), new DefaultDirectoryFileTreeFactory());
+        final String displayName = capitalize((CharSequence) sourceSet.getName()) + " Solidity ABI";
+
+        final SourceDirectorySet directorySet = project.getObjects()
+                .sourceDirectorySet(sourceSet.getName(), displayName);
 
         directorySet.srcDir(buildOutputDir(sourceSet));
         directorySet.include("**/*.abi");

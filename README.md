@@ -1,7 +1,7 @@
 web3j Gradle Plugin
 ===================
 
-Gradle plugin that generates [web3j](https://web3j.io/) Java wrappers from Solidity smart contracts.
+Gradle plugin that generates [web3j][web3j] Java wrappers from Solidity smart contracts.
 It smoothly integrates with your project's build lifecycle by adding specific tasks that can be also
 run independently.
 
@@ -10,6 +10,8 @@ run independently.
 Before you start, you will need to install the
 [Solidity compiler](https://solidity.readthedocs.io/en/latest/installing-solidity.html)
 if is not already installed in your computer.
+
+In addition, the minimum Gradle version to run the plugin is `4.9` and the recommended `5.2.x`.
 
 ### Using the `buildscript` convention
 
@@ -23,7 +25,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.web3j:web3j-gradle-plugin:4.1.1'
+        classpath 'org.web3j:web3j-gradle-plugin:4.1.2'
     }
 }
 
@@ -37,7 +39,7 @@ build file:
 
 ```groovy
 plugins {
-    id 'org.web3j' version '4.1.1'
+    id 'org.web3j' version '4.1.2'
 }
 ```
 
@@ -50,6 +52,18 @@ Then run your project containing Solidity contracts:
 After applying the plugin, the base directory for generated code (by default 
 `$buildDir/generated/source/web3j`) will contain a directory for each source set 
 (by default `main` and `test`) containing the smart contract wrappers Java classes.
+
+### Project dependencies
+
+The plugin requires the core [web3j][web3j] dependency to be declared in your project.
+The minimum version is 4.0 but is recommended to use the 
+[latest available release](https://github.com/web3j/web3j/releases).
+
+```groovy
+dependencies {
+    implementation "org.web3j:core:$web3jVersion"
+}
+```
 
 ## Code generation
 
@@ -125,3 +139,5 @@ To obtain a list and description of all added tasks, run the command:
 ```
 ./gradlew tasks --all
 ```
+
+[web3j]: https://web3j.io/

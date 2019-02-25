@@ -27,13 +27,12 @@ import static org.codehaus.groovy.runtime.StringGroovyMethods.capitalize;
  */
 public class Web3jPlugin implements Plugin<Project> {
 
-    public static final String ID = "org.web3j";
+    static final String ID = "org.web3j";
 
     public void apply(final Project target) {
         target.getPluginManager().apply(JavaPlugin.class);
         target.getPluginManager().apply(SolidityPlugin.class);
         target.getExtensions().create(Web3jExtension.NAME, Web3jExtension.class, target);
-        target.getDependencies().add("implementation", "org.web3j:core:4.1.1");
 
         final SourceSetContainer sourceSets = target.getConvention()
                 .getPlugin(JavaPluginConvention.class).getSourceSets();

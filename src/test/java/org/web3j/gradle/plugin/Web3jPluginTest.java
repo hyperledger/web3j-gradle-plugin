@@ -14,10 +14,7 @@ import java.nio.file.Files;
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
 import static org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class Web3jPluginTest {
 
@@ -57,6 +54,9 @@ public class Web3jPluginTest {
                 "}\n" +
                 "repositories {\n" +
                 "   mavenCentral()\n" +
+                "}\n" +
+                "dependencies {\n" +
+                "   implementation \"org.web3j:core:4.1.1\"\n" +
                 "}\n";
 
         Files.write(buildFile.toPath(), buildFileContent.getBytes());

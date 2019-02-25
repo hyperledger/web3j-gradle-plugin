@@ -7,6 +7,9 @@ import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.file.SourceDirectorySet;
+import org.gradle.api.internal.file.DefaultSourceDirectorySet;
+import org.gradle.api.internal.file.IdentityFileResolver;
+import org.gradle.api.internal.file.collections.DefaultDirectoryFileTreeFactory;
 import org.gradle.api.plugins.Convention;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
@@ -65,7 +68,7 @@ public class Web3jPlugin implements Plugin<Project> {
                 generateTaskName, GenerateContractWrappers.class);
 
         // Set the sources for the generation task
-        task.setSource(buildSourceDirectorySet(project, sourceSet));
+        task.setSource(buildSourceDirectorySet(sourceSet));
         task.setDescription("Generates web3j contract wrappers for "
                 + sourceSet.getName() + " source set.");
 
@@ -89,13 +92,14 @@ public class Web3jPlugin implements Plugin<Project> {
         compileJava.dependsOn(task);
     }
 
-    private SourceDirectorySet buildSourceDirectorySet(
-            final Project project, final SourceSet sourceSet) {
+    private SourceDirectorySet buildSourceDirectorySet(final SourceSet sourceSet) {
 
         final String displayName = capitalize((CharSequence) sourceSet.getName()) + " Solidity ABI";
 
-        final SourceDirectorySet directorySet = project.getObjects()
-                .sourceDirectorySet(sourceSet.getName(), displayName);
+        final SourceDirectorySet directorySet = new DefaultSourceDirectorySet(
+                sourceSet.getName(), displayName,
+                new IdentityFileResolver(),
+                new DefaultDirectoryFileTreeFactory());
 
         directorySet.srcDir(buildOutputDir(sourceSet));
         directorySet.include("**/*.abi");

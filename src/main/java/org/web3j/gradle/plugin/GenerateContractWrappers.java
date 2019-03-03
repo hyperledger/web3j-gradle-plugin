@@ -6,14 +6,15 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.SourceTask;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.workers.IsolationMode;
 import org.gradle.workers.WorkerExecutor;
-import org.web3j.codegen.SolidityFunctionWrapper;
 
+@CacheableTask
 public class GenerateContractWrappers extends SourceTask {
 
     private final WorkerExecutor executor;

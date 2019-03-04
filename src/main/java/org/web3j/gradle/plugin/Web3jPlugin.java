@@ -80,6 +80,7 @@ public class Web3jPlugin implements Plugin<Project> {
 
         // Set task excluded contracts
         task.setExcludedContracts(extension.getExcludedContracts());
+        task.setIncludedContracts(extension.getIncludedContracts());
 
         task.dependsOn(project.getTasks().withType(SolidityCompile.class)
                 .named("compile" + srcSetName + "Solidity"));

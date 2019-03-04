@@ -25,7 +25,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.web3j:web3j-gradle-plugin:4.1.2'
+        classpath 'org.web3j:web3j-gradle-plugin:4.1.3'
     }
 }
 
@@ -39,7 +39,7 @@ build file:
 
 ```groovy
 plugins {
-    id 'org.web3j' version '4.1.2'
+    id 'org.web3j' version '4.1.3'
 }
 ```
 
@@ -85,6 +85,7 @@ The properties accepted by the DSL are listed in the following table:
 | `generatedPackageName`  | `String`   | `${group}.web3j` or `org.web3j.{0}` | Generated contract wrappers package. |
 | `generatedFilesBaseDir` | `String`   | `$buildDir/generated/source/web3j`  | Generated Java code output directory. |
 | `excludedContracts`     | `String[]` | `[]`                                | Excluded contract names from wrapper generation. |
+| `includedContracts`     | `String[]` | `[]`                                | Included contract names from wrapper generation. Has preference over `excludedContracts`. |
 | `useNativeJavaTypes`    | `Boolean`  | `true`                              | Generate smart contract wrappers using native Java types. |
 
 The `generatedPackageName` is evaluated as a [message format](https://docs.oracle.com/javase/6/docs/api/index.html?java/text/MessageFormat.html) 

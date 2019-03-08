@@ -41,6 +41,11 @@ public class Web3jExtension {
      */
     private List<String> excludedContracts;
 
+    /**
+     * Included contract names from wrapper generation.
+     */
+    private List<String> includedContracts;
+
     public String getGeneratedPackageName() {
         return generatedPackageName;
     }
@@ -75,20 +80,29 @@ public class Web3jExtension {
         this.excludedContracts = excludedContracts;
     }
 
+    public List<String> getIncludedContracts() {
+        return includedContracts;
+    }
+
+    public void setIncludedContracts(final List<String> includedContracts) {
+        this.includedContracts = includedContracts;
+    }
+
     public Web3jExtension(final Project project) {
         generatedFilesBaseDir = project.getBuildDir().getAbsolutePath()
-                + "/generated/source/web3j";
+                + "/generated/source/" + NAME;
 
         // Use the project's group name in generated package
         final String projectGroup = project.getGroup().toString();
         if (!projectGroup.isEmpty()) {
-            generatedPackageName = projectGroup + ".web3j";
+            generatedPackageName = projectGroup + "." + NAME;
         } else {
             generatedPackageName = DEFAULT_GENERATED_PACKAGE;
         }
 
         useNativeJavaTypes = true;
         excludedContracts = new ArrayList<>();
+        includedContracts = new ArrayList<>();
     }
 
 }

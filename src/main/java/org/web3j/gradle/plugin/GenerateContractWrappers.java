@@ -6,14 +6,15 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.SourceTask;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.workers.IsolationMode;
 import org.gradle.workers.WorkerExecutor;
-import org.web3j.codegen.SolidityFunctionWrapper;
 
+@CacheableTask
 public class GenerateContractWrappers extends SourceTask {
 
     private final WorkerExecutor executor;
@@ -28,6 +29,10 @@ public class GenerateContractWrappers extends SourceTask {
     @Input
     @Optional
     private List<String> excludedContracts;
+
+    @Input
+    @Optional
+    private List<String> includedContracts;
 
     @Inject
     public GenerateContractWrappers(final WorkerExecutor executor) {
@@ -45,7 +50,7 @@ public class GenerateContractWrappers extends SourceTask {
             final String contractName = contractAbi.getName()
                     .replaceAll("\\.abi", "");
 
-            if (excludedContracts == null || !excludedContracts.contains(contractName)) {
+            if (shouldGenerateContract(contractName)) {
                 final String packageName = MessageFormat.format(
                         getGeneratedJavaPackageName(), contractName.toLowerCase());
 
@@ -58,6 +63,14 @@ public class GenerateContractWrappers extends SourceTask {
                             getUseNativeJavaTypes());
                 });
             }
+        }
+    }
+
+    private boolean shouldGenerateContract(final String contractName) {
+        if (includedContracts == null || includedContracts.isEmpty()) {
+            return excludedContracts == null || !excludedContracts.contains(contractName);
+        } else {
+            return includedContracts.contains(contractName);
         }
     }
 
@@ -86,5 +99,11 @@ public class GenerateContractWrappers extends SourceTask {
         this.excludedContracts = excludedContracts;
     }
 
+    public List<String> getIncludedContracts() {
+        return includedContracts;
+    }
 
+    public void setIncludedContracts(final List<String> includedContracts) {
+        this.includedContracts = includedContracts;
+    }
 }

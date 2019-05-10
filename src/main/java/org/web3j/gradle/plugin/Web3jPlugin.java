@@ -33,6 +33,7 @@ public class Web3jPlugin implements Plugin<Project> {
         target.getPluginManager().apply(JavaPlugin.class);
         target.getPluginManager().apply(SolidityPlugin.class);
         target.getExtensions().create(Web3jExtension.NAME, Web3jExtension.class, target);
+        target.getDependencies().add("implementation", "org.web3j:core:4.3.0");
 
         final SourceSetContainer sourceSets = target.getConvention()
                 .getPlugin(JavaPluginConvention.class).getSourceSets();
@@ -68,8 +69,8 @@ public class Web3jPlugin implements Plugin<Project> {
 
         // Set the sources for the generation task
         task.setSource(buildSourceDirectorySet(sourceSet));
-        task.setDescription("Generates web3j contract wrappers for "
-                + sourceSet.getName() + " source set.");
+        task.setDescription("Generates " + sourceSet.getName()
+                + " Java contract wrappers from Solidity ABIs.");
 
         // Set the task output directory
         task.getOutputs().dir(outputDir);

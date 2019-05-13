@@ -57,9 +57,6 @@ public class Web3jPluginTest {
                 "}\n" +
                 "repositories {\n" +
                 "   mavenCentral()\n" +
-                "}\n" +
-                "dependencies {\n" +
-                "   implementation \"org.web3j:core:4.1.1\"\n" +
                 "}\n";
 
         Files.write(buildFile.toPath(), buildFileContent.getBytes());
@@ -112,9 +109,6 @@ public class Web3jPluginTest {
                 "}\n" +
                 "repositories {\n" +
                 "   mavenCentral()\n" +
-                "}\n" +
-                "dependencies {\n" +
-                "   implementation \"org.web3j:core:4.1.1\"\n" +
                 "}\n";
 
         Files.write(buildFile.toPath(), buildFileContent.getBytes());

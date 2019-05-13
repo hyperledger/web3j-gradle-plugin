@@ -11,7 +11,7 @@ Before you start, you will need to install the
 [Solidity compiler](https://solidity.readthedocs.io/en/latest/installing-solidity.html)
 if is not already installed in your computer.
 
-In addition, the minimum Gradle version to run the plugin is `4.9` and the recommended `5.2.x`.
+In addition, the minimum Gradle version to run the plugin is `4.9` and the recommended `5.4.x`.
 
 ### Using the `buildscript` convention
 
@@ -25,7 +25,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.web3j:web3j-gradle-plugin:4.1.3'
+        classpath 'org.web3j:web3j-gradle-plugin:4.3.0'
     }
 }
 
@@ -39,7 +39,7 @@ build file:
 
 ```groovy
 plugins {
-    id 'org.web3j' version '4.1.3'
+    id 'org.web3j' version '4.3.0'
 }
 ```
 

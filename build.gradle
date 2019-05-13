@@ -28,8 +28,8 @@ jacocoTestReport {
 }
 
 ext {
-    web3jVersion = '4.1.1'
-    solidityPluginVersion = '0.1.4'
+    web3jVersion = '4.3.0'
+    solidityPluginVersion = '0.1.6'
     junitVersion = '4.12'
 
     ossrhUsername = project.hasProperty('ossrhUsername') ? project.property('ossrhUsername') : System.getenv('OSSRH_USERNAME')

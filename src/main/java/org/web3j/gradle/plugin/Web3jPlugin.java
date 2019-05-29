@@ -83,6 +83,9 @@ public class Web3jPlugin implements Plugin<Project> {
         task.setExcludedContracts(extension.getExcludedContracts());
         task.setIncludedContracts(extension.getIncludedContracts());
 
+        // Set the contract addresses length (default 160)
+        task.setAddressLength(extension.getAddressBitLength());
+
         task.dependsOn(project.getTasks().withType(SolidityCompile.class)
                 .named("compile" + srcSetName + "Solidity"));
 

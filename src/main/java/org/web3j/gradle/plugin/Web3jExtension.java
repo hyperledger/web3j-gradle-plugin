@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.gradle.api.Project;
+import org.web3j.abi.datatypes.Address;
 
 /**
  * web3j extension for plugin configuration.
@@ -45,6 +46,11 @@ public class Web3jExtension {
      * Included contract names from wrapper generation.
      */
     private List<String> includedContracts;
+
+    /**
+     * Bit length for network addresses.
+     */
+    private int addressBitLength;
 
     public String getGeneratedPackageName() {
         return generatedPackageName;
@@ -88,6 +94,14 @@ public class Web3jExtension {
         this.includedContracts = includedContracts;
     }
 
+    public int getAddressBitLength() {
+        return addressBitLength;
+    }
+
+    public void setAddressBitLength(final int addressBitLength) {
+        this.addressBitLength = addressBitLength;
+    }
+
     public Web3jExtension(final Project project) {
         generatedFilesBaseDir = project.getBuildDir().getAbsolutePath()
                 + "/generated/source/" + NAME;
@@ -103,6 +117,7 @@ public class Web3jExtension {
         useNativeJavaTypes = true;
         excludedContracts = new ArrayList<>();
         includedContracts = new ArrayList<>();
+        addressBitLength = Address.DEFAULT_LENGTH;
     }
 
 }

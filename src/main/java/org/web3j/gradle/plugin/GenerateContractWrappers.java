@@ -34,6 +34,10 @@ public class GenerateContractWrappers extends SourceTask {
     @Optional
     private List<String> includedContracts;
 
+    @Input
+    @Optional
+    private Integer addressLength;
+
     @Inject
     public GenerateContractWrappers(final WorkerExecutor executor) {
         this.executor = executor;
@@ -59,7 +63,7 @@ public class GenerateContractWrappers extends SourceTask {
                 executor.submit(GenerateContractWrapper.class, configuration -> {
                     configuration.setIsolationMode(IsolationMode.NONE);
                     configuration.setParams(contractName, contractBin,
-                            contractAbi, outputDir, packageName,
+                            contractAbi, outputDir, packageName, addressLength,
                             getUseNativeJavaTypes());
                 });
             }
@@ -105,5 +109,13 @@ public class GenerateContractWrappers extends SourceTask {
 
     public void setIncludedContracts(final List<String> includedContracts) {
         this.includedContracts = includedContracts;
+    }
+
+    public Integer getAddressLength() {
+        return addressLength;
+    }
+
+    public void setAddressLength(final Integer addressLength) {
+        this.addressLength = addressLength;
     }
 }

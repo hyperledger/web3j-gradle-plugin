@@ -7,7 +7,7 @@ run independently.
 
 ## Plugin configuration
 
-The minimum Gradle version to run the plugin is `4.9` and the recommended `5.4.x`.
+The minimum Gradle version to run the plugin is `5.+`.
 
 ### Using the `buildscript` convention
 

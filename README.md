@@ -7,11 +7,7 @@ run independently.
 
 ## Plugin configuration
 
-Before you start, you will need to install the
-[Solidity compiler](https://solidity.readthedocs.io/en/latest/installing-solidity.html)
-if is not already installed in your computer.
-
-In addition, the minimum Gradle version to run the plugin is `4.9` and the recommended `5.4.x`.
+The minimum Gradle version to run the plugin is `4.9` and the recommended `5.4.x`.
 
 ### Using the `buildscript` convention
 

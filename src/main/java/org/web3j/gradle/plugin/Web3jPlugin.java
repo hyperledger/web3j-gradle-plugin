@@ -63,34 +63,34 @@ public class Web3jPlugin implements Plugin<Project> {
                 "" : capitalize((CharSequence) sourceSet.getName());
 
         final String generateTaskName = "generate" + srcSetName + "ContractWrappers";
+        project.getTasks().register(generateTaskName, GenerateContractWrappers.class, task -> {
 
-        final GenerateContractWrappers task = project.getTasks().create(
-                generateTaskName, GenerateContractWrappers.class);
+            // Set the sources for the generation task
+            task.setSource(buildSourceDirectorySet(sourceSet));
+            task.setDescription("Generates " + sourceSet.getName()
+                    + " Java contract wrappers from Solidity ABIs.");
 
-        // Set the sources for the generation task
-        task.setSource(buildSourceDirectorySet(sourceSet));
-        task.setDescription("Generates " + sourceSet.getName()
-                + " Java contract wrappers from Solidity ABIs.");
+            // Set the task output directory
+            task.getOutputs().dir(outputDir);
 
-        // Set the task output directory
-        task.getOutputs().dir(outputDir);
+            // Set the task generated package name, classpath and group
+            task.setGeneratedJavaPackageName(extension.getGeneratedPackageName());
+            task.setUseNativeJavaTypes(extension.getUseNativeJavaTypes());
+            task.setGroup(Web3jExtension.NAME);
 
-        // Set the task generated package name and classpath
-        task.setGeneratedJavaPackageName(extension.getGeneratedPackageName());
-        task.setUseNativeJavaTypes(extension.getUseNativeJavaTypes());
+            // Set task excluded and included contracts
+            task.setExcludedContracts(extension.getExcludedContracts());
+            task.setIncludedContracts(extension.getIncludedContracts());
 
-        // Set task excluded contracts
-        task.setExcludedContracts(extension.getExcludedContracts());
-        task.setIncludedContracts(extension.getIncludedContracts());
+            task.dependsOn(project.getTasks().withType(SolidityCompile.class)
+                    .named("compile" + srcSetName + "Solidity"));
 
-        task.dependsOn(project.getTasks().withType(SolidityCompile.class)
-                .named("compile" + srcSetName + "Solidity"));
+            final SourceTask compileJava = (SourceTask) project.getTasks()
+                    .getByName("compile" + srcSetName + "Java");
 
-        final SourceTask compileJava = (SourceTask) project.getTasks()
-                .getByName("compile" + srcSetName + "Java");
-
-        compileJava.source(task.getOutputs().getFiles().getSingleFile());
-        compileJava.dependsOn(task);
+            compileJava.source(task.getOutputs().getFiles().getSingleFile());
+            compileJava.dependsOn(task);
+        });
     }
 
     private SourceDirectorySet buildSourceDirectorySet(final SourceSet sourceSet) {

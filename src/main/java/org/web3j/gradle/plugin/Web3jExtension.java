@@ -117,7 +117,7 @@ public class Web3jExtension {
         useNativeJavaTypes = true;
         excludedContracts = new ArrayList<>();
         includedContracts = new ArrayList<>();
-        addressBitLength = Address.DEFAULT_LENGTH;
+        addressBitLength = Address.DEFAULT_LENGTH / Byte.SIZE;
     }
 
 }

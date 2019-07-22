@@ -4,9 +4,7 @@ import java.io.File;
 
 import javax.inject.Inject;
 
-import org.gradle.api.internal.plugins.PluginApplicationException;
-import org.web3j.codegen.SolidityFunctionWrapper;
-import org.web3j.utils.Files;
+import org.web3j.codegen.SolidityFunctionWrapperGenerator;
 
 public class GenerateContractWrapper implements Runnable {
 
@@ -40,18 +38,19 @@ public class GenerateContractWrapper implements Runnable {
         this.useNativeJavaTypes = useNativeJavaTypes;
     }
 
-
     @Override
     public void run() {
-        final SolidityFunctionWrapper wrapper =
-                new SolidityFunctionWrapper(useNativeJavaTypes, addressLength);
+        final String typesFlag = useNativeJavaTypes ? "--javaTypes" : "--solidityTypes";
 
-        try {
-            wrapper.generateJavaFiles(contractName, Files.readString(contractBin),
-                    Files.readString(contractAbi), outputDir, packageName);
-        } catch (Exception e) {
-            throw new PluginApplicationException(Web3jPlugin.ID, e);
-        }
+        SolidityFunctionWrapperGenerator.main(new String[]{
+                "--abiFile", contractAbi.getAbsolutePath(),
+                "--binFile", contractBin.getAbsolutePath(),
+                "--outputDir", outputDir,
+                "--package", packageName,
+                "--contractName", contractName,
+                "--addressLength", String.valueOf(addressLength),
+                typesFlag
+        });
     }
 
 }

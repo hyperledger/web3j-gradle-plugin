@@ -20,7 +20,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.web3j:web3j-gradle-plugin:4.3.0'
+        classpath 'org.web3j:web3j-gradle-plugin:4.5.0'
     }
 }
 
@@ -34,7 +34,7 @@ build file:
 
 ```groovy
 plugins {
-    id 'org.web3j' version '4.3.0'
+    id 'org.web3j' version '4.5.0'
 }
 ```
 

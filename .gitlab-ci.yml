@@ -5,7 +5,6 @@ variables:
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
 
-
 before_script:
 - export GRADLE_USER_HOME=`pwd`/.gradle
 
@@ -21,13 +20,7 @@ stages:
 build:
   stage: build
   script:
-  - ./gradlew clean build -x test
-
-# Unit tests are disabled as solidity (solc) is not available in gitlab-ci.
-#unit tests:
-#  stage: test
-#  script:
-#  - ./gradlew test
+    - ./gradlew build
 
 publish_snapshot:
   stage: deploy

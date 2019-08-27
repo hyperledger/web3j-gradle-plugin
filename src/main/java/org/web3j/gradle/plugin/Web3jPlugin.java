@@ -75,9 +75,10 @@ public class Web3jPlugin implements Plugin<Project> {
         // Set the task output directory
         task.getOutputs().dir(outputDir);
 
-        // Set the task generated package name and classpath
+        // Set the task generated package name, classpath and group
         task.setGeneratedJavaPackageName(extension.getGeneratedPackageName());
         task.setUseNativeJavaTypes(extension.getUseNativeJavaTypes());
+        task.setGroup(Web3jExtension.NAME);
 
         // Set task excluded contracts
         task.setExcludedContracts(extension.getExcludedContracts());

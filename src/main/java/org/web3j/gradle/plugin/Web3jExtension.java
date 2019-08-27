@@ -15,7 +15,7 @@ public class Web3jExtension {
     /**
      * Extension name used in Gradle build files.
      */
-    static final String NAME = "web3j";
+    public static final String NAME = "web3j";
 
     private static final String DEFAULT_GENERATED_PACKAGE = "org.web3j.{0}";
 

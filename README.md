@@ -12,8 +12,7 @@ The minimum Gradle version to run the plugin is `5.+`.
 ### Using the `buildscript` convention
 
 To install the web3j Plugin using the old Gradle `buildscript` convention, you should add 
-the following to the first line of your build file (at the moment only release versions 
-are supported in Gradle, not SNAPSHOT):
+the following to the first line of your build file:
 
 ```groovy
 buildscript {

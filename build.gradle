@@ -28,7 +28,7 @@ jacocoTestReport {
 }
 
 ext {
-    web3jVersion = '4.5.0'
+    web3jVersion = project.property('version')
     solidityPluginVersion = '0.1.6'
     junitVersion = '4.12'
 
@@ -44,14 +44,18 @@ ext {
 
 repositories {
     mavenCentral()
+    jcenter()
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
 }
 
 dependencies {
     implementation "org.web3j:solidity-gradle-plugin:$solidityPluginVersion"
-    implementation("org.web3j:console:$web3jVersion") {
+    implementation("org.web3j:core:$web3jVersion") {
         exclude group: 'org.slf4j', module: 'slf4j-nop'
     }
-    implementation("org.web3j:core:$web3jVersion") {
+    implementation("org.web3j:codegen:$web3jVersion") {
         exclude group: 'org.slf4j', module: 'slf4j-nop'
     }
     testCompile "junit:junit:$junitVersion"
@@ -226,7 +230,6 @@ bintray {
 
 task release {
     dependsOn 'build'
-    dependsOn 'uploadArchives'
 
     doLast {
         // Validates the user inputs before a release can be performed.

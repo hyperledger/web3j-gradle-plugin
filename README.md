@@ -20,7 +20,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.web3j:web3j-gradle-plugin:4.3.0'
+        classpath 'org.web3j:web3j-gradle-plugin:4.5.0'
     }
 }
 
@@ -34,7 +34,7 @@ build file:
 
 ```groovy
 plugins {
-    id 'org.web3j' version '4.3.0'
+    id 'org.web3j' version '4.5.0'
 }
 ```
 
@@ -82,6 +82,7 @@ The properties accepted by the DSL are listed in the following table:
 | `excludedContracts`     | `String[]` | `[]`                                | Excluded contract names from wrapper generation. |
 | `includedContracts`     | `String[]` | `[]`                                | Included contract names from wrapper generation. Has preference over `excludedContracts`. |
 | `useNativeJavaTypes`    | `Boolean`  | `true`                              | Generate smart contract wrappers using native Java types. |
+| `addressBitLength`      | `int`      | `160`                               | Supported address length in bits, by default Ethereum addresses. |
 
 The `generatedPackageName` is evaluated as a [message format](https://docs.oracle.com/javase/6/docs/api/index.html?java/text/MessageFormat.html) 
 string accepting a single parameter between curly brackets (`{0}`),

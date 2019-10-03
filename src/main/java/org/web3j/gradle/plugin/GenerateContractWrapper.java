@@ -4,9 +4,7 @@ import java.io.File;
 
 import javax.inject.Inject;
 
-import org.gradle.api.internal.plugins.PluginApplicationException;
-import org.web3j.codegen.SolidityFunctionWrapper;
-import org.web3j.utils.Files;
+import org.web3j.codegen.SolidityFunctionWrapperGenerator;
 
 public class GenerateContractWrapper implements Runnable {
 
@@ -18,6 +16,8 @@ public class GenerateContractWrapper implements Runnable {
     private final String outputDir;
     private final String packageName;
 
+    private final int addressLength;
+
     private final boolean useNativeJavaTypes;
 
     @Inject
@@ -27,26 +27,30 @@ public class GenerateContractWrapper implements Runnable {
             final File contractAbi,
             final String outputDir,
             final String packageName,
+            final int addressLength,
             final boolean useNativeJavaTypes) {
         this.contractName = contractName;
         this.contractBin = contractBin;
         this.contractAbi = contractAbi;
         this.outputDir = outputDir;
         this.packageName = packageName;
+        this.addressLength = addressLength;
         this.useNativeJavaTypes = useNativeJavaTypes;
     }
 
-
     @Override
     public void run() {
-        final SolidityFunctionWrapper wrapper = new SolidityFunctionWrapper(useNativeJavaTypes);
+        final String typesFlag = useNativeJavaTypes ? "--javaTypes" : "--solidityTypes";
 
-        try {
-            wrapper.generateJavaFiles(contractName, Files.readString(contractBin),
-                    Files.readString(contractAbi), outputDir, packageName);
-        } catch (Exception e) {
-            throw new PluginApplicationException(Web3jPlugin.ID, e);
-        }
+        SolidityFunctionWrapperGenerator.main(new String[]{
+                "--abiFile", contractAbi.getAbsolutePath(),
+                "--binFile", contractBin.getAbsolutePath(),
+                "--outputDir", outputDir,
+                "--package", packageName,
+                "--contractName", contractName,
+                "--addressLength", String.valueOf(addressLength),
+                typesFlag
+        });
     }
 
 }

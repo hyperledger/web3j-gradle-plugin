@@ -28,7 +28,7 @@ jacocoTestReport {
 }
 
 ext {
-    web3jVersion = '4.4.0-SNAPSHOT'
+    web3jVersion = '4.5.0'
     solidityPluginVersion = '0.1.6'
     junitVersion = '4.12'
 
@@ -44,7 +44,6 @@ ext {
 
 repositories {
     mavenCentral()
-    mavenLocal()
 }
 
 dependencies {

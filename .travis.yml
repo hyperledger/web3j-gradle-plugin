@@ -13,13 +13,12 @@ install: skip
 test: skip
 jobs:
   include:
-    include:
-    - stage: build snapshot
-      if: branch = master
-      script: "./gradlew check jacocoTestReport release -PossrhRepoUrl=${SNAPSHOT_OSSRH_REPO_URL}"
-    - stage: build release
-      if: branch =~ /release/
-      script: "./gradlew check release -Pversion=${TRAVIS_BRANCH#'release/'} -PossrhRepoUrl=${RELEASE_OSSRH_REPO_URL}"
+  - stage: build snapshot
+    if: branch = master
+    script: "./gradlew check jacocoTestReport release -PossrhRepoUrl=${SNAPSHOT_OSSRH_REPO_URL}"
+  - stage: build release
+    if: branch =~ /release/
+    script: "./gradlew check release -Pversion=${TRAVIS_BRANCH#'release/'} -PossrhRepoUrl=${RELEASE_OSSRH_REPO_URL}"
 after_success:
 - bash <(curl -s https://codecov.io/bash)
 env:

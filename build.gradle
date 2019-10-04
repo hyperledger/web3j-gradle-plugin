@@ -203,6 +203,7 @@ bintray {
     key = bintrayKey
     publications = ['mavenJava']
     publish = true
+    override = true
     pkg {
         repo = 'maven'
         name = 'web3j-gradle-plugin'

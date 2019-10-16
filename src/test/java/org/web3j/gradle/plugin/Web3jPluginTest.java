@@ -57,6 +57,9 @@ public class Web3jPluginTest {
                 "}\n" +
                 "repositories {\n" +
                 "   mavenCentral()\n" +
+                "   maven {\n" +
+                "       url 'https://oss.sonatype.org/content/repositories/snapshots'\n" +
+                "   }" +
                 "}\n";
 
         Files.write(buildFile.toPath(), buildFileContent.getBytes());
@@ -109,6 +112,9 @@ public class Web3jPluginTest {
                 "}\n" +
                 "repositories {\n" +
                 "   mavenCentral()\n" +
+                "   maven {\n" +
+                "       url 'https://oss.sonatype.org/content/repositories/snapshots'\n" +
+                "   }" +
                 "}\n";
 
         Files.write(buildFile.toPath(), buildFileContent.getBytes());

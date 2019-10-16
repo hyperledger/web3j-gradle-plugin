@@ -1,6 +1,9 @@
 package org.web3j.gradle.plugin;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Properties;
 
 import org.codehaus.groovy.runtime.InvokerHelper;
 import org.gradle.api.InvalidUserDataException;
@@ -10,6 +13,7 @@ import org.gradle.api.file.SourceDirectorySet;
 import org.gradle.api.internal.file.DefaultSourceDirectorySet;
 import org.gradle.api.internal.file.IdentityFileResolver;
 import org.gradle.api.internal.file.collections.DefaultDirectoryFileTreeFactory;
+import org.gradle.api.internal.plugins.PluginApplicationException;
 import org.gradle.api.plugins.Convention;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
@@ -33,12 +37,31 @@ public class Web3jPlugin implements Plugin<Project> {
         target.getPluginManager().apply(JavaPlugin.class);
         target.getPluginManager().apply(SolidityPlugin.class);
         target.getExtensions().create(Web3jExtension.NAME, Web3jExtension.class, target);
-        target.getDependencies().add("implementation", "org.web3j:core:4.5.0");
+        target.getDependencies().add("implementation", "org.web3j:core:" + getProjectVersion());
 
         final SourceSetContainer sourceSets = target.getConvention()
                 .getPlugin(JavaPluginConvention.class).getSourceSets();
 
         target.afterEvaluate(p -> sourceSets.all(sourceSet -> configure(target, sourceSet)));
+    }
+
+    private String getProjectVersion() {
+        final URL versionPropsFile = getClass().getClassLoader()
+                .getResource("version.properties");
+
+        if (versionPropsFile == null) {
+            throw new PluginApplicationException(
+                    "No version.properties file found in the classpath.", null);
+        } else {
+            try {
+                final Properties versionProps = new Properties();
+                versionProps.load(versionPropsFile.openStream());
+                return versionProps.getProperty("version");
+            } catch (IOException e) {
+                throw new PluginApplicationException(
+                        "Could not read version.properties file.", e);
+            }
+        }
     }
 
     /**

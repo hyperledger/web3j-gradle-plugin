@@ -28,7 +28,7 @@ jacocoTestReport {
 }
 
 ext {
-    web3jVersion = project.property('version')
+    web3jVersion = version
     solidityPluginVersion = '0.1.6'
     junitVersion = '4.12'
 
@@ -46,7 +46,7 @@ repositories {
     mavenCentral()
     jcenter()
     maven {
-        url "https://oss.sonatype.org/content/repositories/snapshots"
+        url 'https://oss.sonatype.org/content/repositories/snapshots'
     }
 }
 
@@ -83,6 +83,14 @@ pluginBundle {
     }
 }
 
+def generatedResources = "$buildDir/generated-resources/main"
+
+sourceSets {
+    main {
+        output.dir(generatedResources, builtBy: 'generateVersionProperties')
+    }
+}
+
 tasks.withType(Test) {
     reports.html.destination file("${reporting.baseDir}/${name}")
 }
@@ -95,6 +103,14 @@ task javadocJar(type: Jar) {
 task sourcesJar(type: Jar) {
     classifier = 'sources'
     from sourceSets.main.allSource
+}
+
+task generateVersionProperties {
+    doLast {
+        new File(generatedResources).mkdirs()
+        def generated = new File(generatedResources, "version.properties")
+        generated.text = "version=$rootProject.version"
+    }
 }
 
 publishing {

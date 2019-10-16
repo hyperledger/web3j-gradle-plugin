@@ -15,16 +15,14 @@ jobs:
   include:
   - stage: build snapshot
     if: branch = master
-    script: "./gradlew check jacocoTestReport release -PossrhRepoUrl=${SNAPSHOT_OSSRH_REPO_URL}"
+    script: "./gradlew check jacocoTestReport publishAllPublicationsToOssrhRepository"
   - stage: build release
     if: branch =~ /release/
-    script: "./gradlew check release -Pversion=${TRAVIS_BRANCH#'release/'} -PossrhRepoUrl=${RELEASE_OSSRH_REPO_URL}"
+    script: "./gradlew check bintrayUpload -Pversion=${TRAVIS_BRANCH#'release/'}"
 after_success:
 - bash <(curl -s https://codecov.io/bash)
 env:
   global:
-  - SNAPSHOT_OSSRH_REPO_URL: https://oss.sonatype.org/content/repositories/snapshots/
-  - RELEASE_OSSRH_REPO_URL: https://oss.sonatype.org/service/local/staging/deploy/maven2
   - secure: nJJxFppvZL84NGo4ZXQOu2tIbuG+V4FweGIDW9CPDnpdR8731l7mOSs/tDtszQPXwr24Ksz7kKWMoAtukgqm+S8MP9Zg8mxQab3EUkiFjVeMyEXbHKqculfHnsHnbARqRkD1VXcMjQGi62nsz4a+U1VNPa/94l610hjPNok51ClOeozQ+XedxT8Bc+EkIM2pwB8SAyQ406IaA2sD/81lM4Almxt0LCurCBc/5xNAZ655vyoNcoBVw9gdlB/gcBzoaziyWknn445+fXFzaUcUaeiB1SCuZ00ohbMctiJ1lUuEBt/3Axwb91r/vvazg6yFeKDtAHLxYH4TlQmun3q8QG6WtREIgQSnvOU/yX/PGdmqQObzl1tAxh3KoLJHoTvANmhaA9DNPjqJFOXJHyUeOjYd0O56tiQ6/i1+obDa2XkdHjnbhgvcoHB3pR/qF6ufZ7oEUI1bllZSrBShHRR8koQzJhpObsYfwxyKbero9j8xCBNDukfYepO53NkDearlc6HXxkJE2eh6ygo231s0j7cqNDeNN7SCHpLzCsS4lf6dQoXBo9Omy7RKzhWZKCWqVB6GqyU3Bq18AuR2egzCH2xlGbnInd+lm+xNNj1kbW9wGEk3YdRefilGShjnagmE1jLB8uTtNwujyEQuvF0ph1r6CO/LkTlfT1248eyAYoo=
   - secure: fComXPUTQZWNUB7z902yjJ/95EA9/+rx5+w4ofh6iIxKxm5MhGdWQT8BJ3fHeFNmAZh5ClIOhw4rmfd6TM3uZxnlqWk+PNGbdlrzZkZyzOQR9rxv6y1YxjL0dDIIZHJ9yBDZ4zUIYv3RwjOagYAgdUlvxP3HTWMEgTNuxfNV2Z/VNN1Ll6l0VmAlno+b2lVxlFce7+He5qtCdPQ/ihq1xAZYwUo8uSY3PQ2B0xP0lChvLFLn4/2pPSl6tsLiAS68rxbDT02vECZ+tXzTJJ+9XdtQ1lrIGmhJAzggZFsAhOzQ+lAl48d+NjVBttILKJW0HEHGOQwzh4bAsHNfHdwLoHzzNhE9DWklg/HLDV5PMgv3W34WH6JhqIrEXbS0pqFA8wT2Qj0YXAhjkDuU9tYXW8eYAdQ4EeuEHy1iCPe3uhKfgJGxN+lU3KCz19qAyKz1Oosx+HPxjSD2xTmu1NTjBlX3tCjiuvHwJSeYGwLVLSlzpuy8qZrQ9bVqCCxD2ur3Ypl4ysQoEUCQslPYPJcWPQ6PCGlTF++0n9jevAU+wvlstD7HdrirRXsk8grhMBHHm/xlrMGsW/H5J5KwTsUwHw4o8THQ3utnrhTTuA8O6ND51gP7fDirTqoqGFHzfK76mzAsSvlEUiu1NRU0nCv1mEDlo0AS78jSQ4Ob6J+D/Xc=
   - secure: ecvoT33QOYWpnvachNLpKw0BNZCvaQtz8B8tG69SyhjBo0F6IpytJ8T4XJjNAluQ4h3RNsAy5ACSppKbgCpYxZhdiGW7J3hntxk5O6JrwsNdl9sVu8MXGeWJrZF4Y1xv9wY5/Xj816N+XSeXLK20hkrB6luyrEbcT70sFcCG051lJ34d4Ib0uKa5ArzdHW1/tHbeySdYitBTT3Wlr+oV7awxpJ/U9W7DofSctwmvq+cP6T85v4P5HM16bgIwJ2gEA1ofJ6apsyc/Qyk4rs6BzhQMn1+ldtEoX6vgZQ3I8zuy/KGKYR65WKuj9Q3SDb7Smb01Xl3N73EcGgU3VAHFocB3Wh7kAy513mGzi2T7nCOTqAYUMh1BjsV+/CTPvviTAjy0aRPs0QAG+30o3IFUDYp9K9HgGTupEobau6H6TBhaUAn5f0IhJyRkhnwezTR3N8aW4bGNqdDJ6egZGo85iC4jsVjEsLVbQatn1OHAaMvw01X8qR2bagLgzLRtDQenN5brq46MXaFbyy0OcdvLSlrREyPLbHYkWvnLwaSdtEmXEupqD1xnYdGFUiw6lHGDnBRaudJqSTDCnLaEvD2UCs6n/Q3h7Y8ow9Iv/m3OofAzzxZWBSiR0oiMbZO97MgvNESRk5WP12Q1EKTlqeuRQMkSEUKlUdHZxEn26lZVCt8=

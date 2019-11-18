@@ -1,3 +1,15 @@
+/*
+ * Copyright 2019 Web3 Labs Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
 package org.web3j.gradle.plugin;
 
 import java.io.File;
@@ -20,15 +32,14 @@ import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.SourceTask;
+
 import org.web3j.solidity.gradle.plugin.SolidityCompile;
 import org.web3j.solidity.gradle.plugin.SolidityPlugin;
 import org.web3j.solidity.gradle.plugin.SoliditySourceSet;
 
 import static org.codehaus.groovy.runtime.StringGroovyMethods.capitalize;
 
-/**
- * Gradle plugin class for web3j code generation from Solidity contracts.
- */
+/** Gradle plugin class for web3j code generation from Solidity contracts. */
 public class Web3jPlugin implements Plugin<Project> {
 
     static final String ID = "org.web3j";
@@ -39,15 +50,14 @@ public class Web3jPlugin implements Plugin<Project> {
         target.getExtensions().create(Web3jExtension.NAME, Web3jExtension.class, target);
         target.getDependencies().add("implementation", "org.web3j:core:" + getProjectVersion());
 
-        final SourceSetContainer sourceSets = target.getConvention()
-                .getPlugin(JavaPluginConvention.class).getSourceSets();
+        final SourceSetContainer sourceSets =
+                target.getConvention().getPlugin(JavaPluginConvention.class).getSourceSets();
 
         target.afterEvaluate(p -> sourceSets.all(sourceSet -> configure(target, sourceSet)));
     }
 
     private String getProjectVersion() {
-        final URL versionPropsFile = getClass().getClassLoader()
-                .getResource("version.properties");
+        final URL versionPropsFile = getClass().getClassLoader().getResource("version.properties");
 
         if (versionPropsFile == null) {
             throw new PluginApplicationException(
@@ -58,42 +68,43 @@ public class Web3jPlugin implements Plugin<Project> {
                 versionProps.load(versionPropsFile.openStream());
                 return versionProps.getProperty("version");
             } catch (IOException e) {
-                throw new PluginApplicationException(
-                        "Could not read version.properties file.", e);
+                throw new PluginApplicationException("Could not read version.properties file.", e);
             }
         }
     }
 
     /**
-     * Configures code generation tasks for the Solidity source sets defined in the project
-     * (e.g. main, test).
-     * <p>
-     * The generated task name for the <code>main</code> source set
-     * will be <code>generateContractWrappers</code>, and for <code>test</code>
-     * <code>generateTestContractWrappers</code>.
+     * Configures code generation tasks for the Solidity source sets defined in the project (e.g.
+     * main, test).
+     *
+     * <p>The generated task name for the <code>main</code> source set will be <code>
+     * generateContractWrappers</code>, and for <code>test</code> <code>generateTestContractWrappers
+     * </code>.
      */
     private void configure(final Project project, final SourceSet sourceSet) {
 
-        final Web3jExtension extension = (Web3jExtension)
-                InvokerHelper.getProperty(project, Web3jExtension.NAME);
+        final Web3jExtension extension =
+                (Web3jExtension) InvokerHelper.getProperty(project, Web3jExtension.NAME);
 
         final File outputDir = buildSourceDir(extension, sourceSet);
 
         // Add source set to the project Java source sets
         sourceSet.getJava().srcDir(outputDir);
 
-        final String srcSetName = sourceSet.getName().equals("main") ?
-                "" : capitalize((CharSequence) sourceSet.getName());
+        final String srcSetName =
+                sourceSet.getName().equals("main")
+                        ? ""
+                        : capitalize((CharSequence) sourceSet.getName());
 
         final String generateTaskName = "generate" + srcSetName + "ContractWrappers";
 
-        final GenerateContractWrappers task = project.getTasks().create(
-                generateTaskName, GenerateContractWrappers.class);
+        final GenerateContractWrappers task =
+                project.getTasks().create(generateTaskName, GenerateContractWrappers.class);
 
         // Set the sources for the generation task
         task.setSource(buildSourceDirectorySet(sourceSet));
-        task.setDescription("Generates " + sourceSet.getName()
-                + " Java contract wrappers from Solidity ABIs.");
+        task.setDescription(
+                "Generates " + sourceSet.getName() + " Java contract wrappers from Solidity ABIs.");
 
         // Set the task output directory
         task.getOutputs().dir(outputDir);
@@ -110,11 +121,13 @@ public class Web3jPlugin implements Plugin<Project> {
         // Set the contract addresses length (default 160)
         task.setAddressLength(extension.getAddressBitLength());
 
-        task.dependsOn(project.getTasks().withType(SolidityCompile.class)
-                .named("compile" + srcSetName + "Solidity"));
+        task.dependsOn(
+                project.getTasks()
+                        .withType(SolidityCompile.class)
+                        .named("compile" + srcSetName + "Solidity"));
 
-        final SourceTask compileJava = (SourceTask) project.getTasks()
-                .getByName("compile" + srcSetName + "Java");
+        final SourceTask compileJava =
+                (SourceTask) project.getTasks().getByName("compile" + srcSetName + "Java");
 
         compileJava.source(task.getOutputs().getFiles().getSingleFile());
         compileJava.dependsOn(task);
@@ -124,10 +137,12 @@ public class Web3jPlugin implements Plugin<Project> {
 
         final String displayName = capitalize((CharSequence) sourceSet.getName()) + " Solidity ABI";
 
-        final SourceDirectorySet directorySet = new DefaultSourceDirectorySet(
-                sourceSet.getName(), displayName,
-                new IdentityFileResolver(),
-                new DefaultDirectoryFileTreeFactory());
+        final SourceDirectorySet directorySet =
+                new DefaultSourceDirectorySet(
+                        sourceSet.getName(),
+                        displayName,
+                        new IdentityFileResolver(),
+                        new DefaultDirectoryFileTreeFactory());
 
         directorySet.srcDir(buildOutputDir(sourceSet));
         directorySet.include("**/*.abi");
@@ -141,18 +156,16 @@ public class Web3jPlugin implements Plugin<Project> {
             throw new InvalidUserDataException("Generated web3j package cannot be empty");
         }
 
-        return new File(extension.getGeneratedFilesBaseDir()
-                + "/" + sourceSet.getName() + "/java");
+        return new File(extension.getGeneratedFilesBaseDir() + "/" + sourceSet.getName() + "/java");
     }
 
     private File buildOutputDir(final SourceSet sourceSet) {
-        final Convention convention = (Convention)
-                InvokerHelper.getProperty(sourceSet, "convention");
+        final Convention convention =
+                (Convention) InvokerHelper.getProperty(sourceSet, "convention");
 
-        final SoliditySourceSet soliditySourceSet = (SoliditySourceSet)
-                convention.getPlugins().get(SoliditySourceSet.NAME);
+        final SoliditySourceSet soliditySourceSet =
+                (SoliditySourceSet) convention.getPlugins().get(SoliditySourceSet.NAME);
 
         return soliditySourceSet.getSolidity().getOutputDir();
     }
-
 }

@@ -1,9 +1,20 @@
+/*
+ * Copyright 2019 Web3 Labs Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
 package org.web3j.gradle.plugin;
 
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.List;
-
 import javax.inject.Inject;
 
 import org.gradle.api.tasks.CacheableTask;
@@ -19,24 +30,15 @@ public class GenerateContractWrappers extends SourceTask {
 
     private final WorkerExecutor executor;
 
-    @Input
-    private String generatedJavaPackageName;
+    @Input private String generatedJavaPackageName;
 
-    @Input
-    @Optional
-    private Boolean useNativeJavaTypes;
+    @Input @Optional private Boolean useNativeJavaTypes;
 
-    @Input
-    @Optional
-    private List<String> excludedContracts;
+    @Input @Optional private List<String> excludedContracts;
 
-    @Input
-    @Optional
-    private List<String> includedContracts;
+    @Input @Optional private List<String> includedContracts;
 
-    @Input
-    @Optional
-    private Integer addressLength;
+    @Input @Optional private Integer addressLength;
 
     @Inject
     public GenerateContractWrappers(final WorkerExecutor executor) {
@@ -51,21 +53,29 @@ public class GenerateContractWrappers extends SourceTask {
 
         for (final File contractAbi : getSource()) {
 
-            final String contractName = contractAbi.getName()
-                    .replaceAll("\\.abi", "");
+            final String contractName = contractAbi.getName().replaceAll("\\.abi", "");
 
             if (shouldGenerateContract(contractName)) {
-                final String packageName = MessageFormat.format(
-                        getGeneratedJavaPackageName(), contractName.toLowerCase());
+                final String packageName =
+                        MessageFormat.format(
+                                getGeneratedJavaPackageName(), contractName.toLowerCase());
 
-                final File contractBin = new File(contractAbi.getParentFile(), contractName + ".bin");
+                final File contractBin =
+                        new File(contractAbi.getParentFile(), contractName + ".bin");
 
-                executor.submit(GenerateContractWrapper.class, configuration -> {
-                    configuration.setIsolationMode(IsolationMode.NONE);
-                    configuration.setParams(contractName, contractBin,
-                            contractAbi, outputDir, packageName, addressLength,
-                            getUseNativeJavaTypes());
-                });
+                executor.submit(
+                        GenerateContractWrapper.class,
+                        configuration -> {
+                            configuration.setIsolationMode(IsolationMode.NONE);
+                            configuration.setParams(
+                                    contractName,
+                                    contractBin,
+                                    contractAbi,
+                                    outputDir,
+                                    packageName,
+                                    addressLength,
+                                    getUseNativeJavaTypes());
+                        });
             }
         }
     }

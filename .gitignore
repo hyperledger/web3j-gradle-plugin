@@ -7,3 +7,6 @@
 .classpath
 .project
 .settings
+
+web3j.asc
+stale_outputs_checked

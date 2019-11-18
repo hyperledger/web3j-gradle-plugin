@@ -1,49 +1,47 @@
 plugins {
-    id 'com.gradle.plugin-publish' version '0.10.1'
-    id 'com.jfrog.bintray' version '1.8.4'
-    id 'java-gradle-plugin'
     id 'java'
-
-    // Required for JFrog Artifactory repository
-    id 'jacoco'
-    id 'maven-publish'
-
-    // Required for Maven Nexus repository
-    id 'maven'
-    id 'signing'
+    id 'java-gradle-plugin'
     id 'idea'
+    id 'jacoco'
+    id "com.diffplug.gradle.spotless" version "3.25.0"
+    id 'io.codearte.nexus-staging' version '0.21.1'
+    id "de.marcphilipp.nexus-publish" version "0.4.0"
+    id 'com.gradle.plugin-publish' version '0.10.1'
+    id "de.undercouch.download" version "4.0.0"
 }
 
 description = 'Gradle plugin providing tasks to generate web3j contracts from Solidity.'
 sourceCompatibility = 1.8
 
-jacoco {
-    toolVersion = '0.8.2' // See http://www.eclemma.org/jacoco/.
-}
-
-jacocoTestReport {
-    reports {
-        xml.enabled = true
-    }
-}
-
 ext {
     web3jVersion = version
     solidityPluginVersion = '0.1.6'
     junitVersion = '4.12'
-
-    ossrhUsername = project.hasProperty('ossrhUsername') ? project.property('ossrhUsername') : System.getenv('OSSRH_USERNAME')
-    ossrhPassword = project.hasProperty('ossrhPassword') ? project.property('ossrhPassword') : System.getenv('OSSRH_PASSWORD')
-    bintrayUser = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
-    bintrayKey = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
-    bintrayGpgPassphrase = project.hasProperty('bintrayGpgPassphrase') ? project.property('bintrayGpgPassphrase') : System.getenv('BINTRAY_GPG_PASSPHRASE')
 }
 
-repositories {
-    mavenCentral()
-    jcenter()
-    maven {
-        url 'https://oss.sonatype.org/content/repositories/snapshots'
+
+nexusStaging {
+    username System.getenv('OSSRH_USERNAME')
+    password System.getenv('OSSRH_PASSWORD')
+}
+
+apply {
+    [
+        'jacoco',
+        'java',
+        'javadoc',
+        'repositories',
+        'publish',
+        'spotless',
+    ].each { buildScript ->
+        download {
+            src "https://raw.githubusercontent.com/web3j/build-tools/master/gradle/$buildScript/build.gradle"
+            dest "$rootDir/gradle/$buildScript/build.gradle"
+            overwrite true
+            quiet true
+            onlyIfModified true
+        }
+        from("$rootDir/gradle/$buildScript/build.gradle")
     }
 }
 
@@ -71,7 +69,12 @@ pluginBundle {
     website = 'https://web3j.io/'
     vcsUrl = 'https://github.com/web3j/web3j-gradle-plugin'
     description = 'Gradle plugin providing tasks to generate web3j contracts from Solidity.'
-    tags = ['solidity', 'ethereum', 'web3.js', 'web3j']
+    tags = [
+        'solidity',
+        'ethereum',
+        'web3.js',
+        'web3j'
+    ]
     plugins {
         web3j {
             // id is captured from java-gradle-plugin configuration
@@ -79,27 +82,12 @@ pluginBundle {
         }
     }
 }
-
 def generatedResources = "$buildDir/generated-resources/main"
 
 sourceSets {
     main {
         output.dir(generatedResources, builtBy: 'generateVersionProperties')
     }
-}
-
-tasks.withType(Test) {
-    reports.html.destination file("${reporting.baseDir}/${name}")
-}
-
-task javadocJar(type: Jar) {
-    classifier = 'javadoc'
-    from javadoc
-}
-
-task sourcesJar(type: Jar) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
 }
 
 task generateVersionProperties {
@@ -109,86 +97,6 @@ task generateVersionProperties {
         generated.text = "version=$rootProject.version"
     }
 }
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-            artifact sourcesJar
-            artifact javadocJar 
-            pom {
-                name = project.name
-                description = project.description
-                url = "https://github.com/web3j/web3j-gradle-plugin"
-                licenses {
-                    license {
-                        name = "The Apache License, Version 2.0"
-                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
-                        distribution = "repo"
-                    }
-                }
-                developers {
-                    developer {
-                        id = "conor10"
-                        name = "Conor Svensson"
-                        email = "conor10@gmail.com"
-                    }
-                    developer {
-                        id = "xaviarias"
-                        name = "Xavier Arias"
-                        email = "xavi.arias.segui@gmail.com"
-                    }
-                }
-                scm {
-                    url = "https://github.com/web3j/web3j-gradle-plugin"
-                    connection = "scm:https://github.com/web3j/web3j-gradle-plugin.git"
-                    developerConnection = "scm:git://github.com/web3j/web3j-gradle-plugin.git"
-                }
-            }
-        }
-    }
-    repositories {
-        maven {
-            name = 'ossrh'
-            url = 'https://oss.sonatype.org/content/repositories/snapshots'
-            mavenContent {
-                snapshotsOnly()
-            }
-            credentials {
-                username ossrhUsername
-                password ossrhPassword
-            }
-        }
-    }
-}
-
-bintray {
-    user = bintrayUser
-    key = bintrayKey
-    publications = ['mavenJava']
-    publish = true
-    override = true
-    pkg {
-        repo = 'maven'
-        name = 'web3j-gradle-plugin'
-        desc = project.description
-        userOrg = 'web3j'
-        licenses = ['Apache-2.0']
-        issueTrackerUrl = 'https://github.com/web3j/web3j-gradle-plugin/issues'
-        vcsUrl = 'https://github.com/web3j/web3j-gradle-plugin.git'
-        websiteUrl = 'http://web3j.io'
-        publicDownloadNumbers = true
-        version {
-            gpg {
-                sign = true
-                passphrase = bintrayGpgPassphrase
-            }
-            mavenCentralSync {
-                sync = true
-                user = ossrhUsername
-                password = ossrhPassword
-                close = '1'
-            }
-        }
-    }
+tasks.withType(Test) {
+    reports.html.destination file("${reporting.baseDir}/${name}")
 }

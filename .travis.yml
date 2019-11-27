@@ -17,11 +17,11 @@ jobs:
     script: "./gradlew check jacocoTestReport"
     if: type = pull_request
   - stage: build master
-    script: "./gradlew check jacocoTestReport publish"
+    script: "./gradlew check jacocoTestReport publishMavenPublicationToSonatypeRepository"
     if: branch = master AND NOT type = pull_request
   - stage: build release
     if: branch =~ /release/
-    script: "./gradlew check publish -Pversion=${TRAVIS_BRANCH#'release/'}"
+    script: "./gradlew check publishMavenPublicationToSonatypeRepository -Pversion=${TRAVIS_BRANCH#'release/'}"
   - stage: release
     if: branch =~ /release/
     script: "./gradlew closeAndReleaseRepository"

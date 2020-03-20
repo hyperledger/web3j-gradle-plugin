@@ -16,7 +16,7 @@ sourceCompatibility = 1.8
 
 ext {
     web3jVersion = version
-    solidityPluginVersion = '0.1.7'
+    solidityPluginVersion = '0.2.3'
     junitVersion = '4.12'
 }
 
@@ -43,12 +43,15 @@ apply {
 
 repositories {
     maven {
-        url "https://plugins.gradle.org/m2/"
+        url 'https://plugins.gradle.org/m2/'
+    }
+    maven {
+        url 'https://dl.bintray.com/hotkeytlt/maven'
     }
 }
 
 dependencies {
-    implementation "org.web3j.solidity:solidity-gradle-plugin:$solidityPluginVersion"
+    implementation "gradle.plugin.org.web3j.solidity:solidity-gradle-plugin:$solidityPluginVersion"
     implementation("org.web3j:core:$web3jVersion") {
         exclude group: 'org.slf4j', module: 'slf4j-nop'
     }

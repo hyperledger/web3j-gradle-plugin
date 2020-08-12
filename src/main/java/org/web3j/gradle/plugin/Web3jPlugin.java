@@ -47,13 +47,17 @@ public class Web3jPlugin implements Plugin<Project> {
     public void apply(final Project target) {
         target.getPluginManager().apply(JavaPlugin.class);
         target.getPluginManager().apply(SolidityPlugin.class);
-        target.getExtensions().create(Web3jExtension.NAME, Web3jExtension.class, target);
         target.getDependencies().add("implementation", "org.web3j:core:" + getProjectVersion());
+        registerExtensions(target);
 
         final SourceSetContainer sourceSets =
                 target.getConvention().getPlugin(JavaPluginConvention.class).getSourceSets();
 
         target.afterEvaluate(p -> sourceSets.all(sourceSet -> configure(target, sourceSet)));
+    }
+
+    protected void registerExtensions(Project project) {
+        project.getExtensions().create(Web3jExtension.NAME, Web3jExtension.class, project);
     }
 
     private String getProjectVersion() {

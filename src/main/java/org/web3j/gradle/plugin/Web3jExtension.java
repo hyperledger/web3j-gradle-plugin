@@ -104,16 +104,22 @@ public class Web3jExtension {
                 project.getBuildDir().getAbsolutePath() + "/generated/source/" + NAME;
 
         // Use the project's group name in generated package
-        final String projectGroup = project.getGroup().toString();
-        if (!projectGroup.isEmpty()) {
-            generatedPackageName = projectGroup + "." + NAME;
-        } else {
-            generatedPackageName = DEFAULT_GENERATED_PACKAGE;
-        }
+        generatedPackageName = getDefaultGeneratedPackageName(project);
 
         useNativeJavaTypes = true;
         excludedContracts = new ArrayList<>();
         includedContracts = new ArrayList<>();
         addressBitLength = Address.DEFAULT_LENGTH / Byte.SIZE;
+    }
+
+    protected String getDefaultGeneratedPackageName(Project project) {
+        String defaultPackageName;
+        final String projectGroup = project.getGroup().toString();
+        if (!projectGroup.isEmpty()) {
+            defaultPackageName = projectGroup + "." + NAME;
+        } else {
+            defaultPackageName = DEFAULT_GENERATED_PACKAGE;
+        }
+        return defaultPackageName;
     }
 }

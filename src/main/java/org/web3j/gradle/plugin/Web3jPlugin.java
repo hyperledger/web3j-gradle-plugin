@@ -163,7 +163,7 @@ public class Web3jPlugin implements Plugin<Project> {
         return new File(extension.getGeneratedFilesBaseDir() + "/" + sourceSet.getName() + "/java");
     }
 
-    private File buildOutputDir(final SourceSet sourceSet) {
+    protected File buildOutputDir(final SourceSet sourceSet) {
         final Convention convention =
                 (Convention) InvokerHelper.getProperty(sourceSet, "convention");
 

@@ -22,9 +22,6 @@ import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.file.SourceDirectorySet;
-import org.gradle.api.internal.file.DefaultSourceDirectorySet;
-import org.gradle.api.internal.file.IdentityFileResolver;
-import org.gradle.api.internal.file.collections.DefaultDirectoryFileTreeFactory;
 import org.gradle.api.internal.plugins.PluginApplicationException;
 import org.gradle.api.plugins.Convention;
 import org.gradle.api.plugins.JavaPlugin;
@@ -32,6 +29,7 @@ import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.SourceTask;
+import org.gradle.internal.Describables;
 
 import org.web3j.solidity.gradle.plugin.SolidityCompile;
 import org.web3j.solidity.gradle.plugin.SolidityPlugin;
@@ -65,14 +63,15 @@ public class Web3jPlugin implements Plugin<Project> {
 
         if (versionPropsFile == null) {
             throw new PluginApplicationException(
-                    "No version.properties file found in the classpath.", null);
+                    Describables.of("No version.properties file found in the classpath."), null);
         } else {
             try {
                 final Properties versionProps = new Properties();
                 versionProps.load(versionPropsFile.openStream());
                 return versionProps.getProperty("version");
             } catch (IOException e) {
-                throw new PluginApplicationException("Could not read version.properties file.", e);
+                throw new PluginApplicationException(
+                        Describables.of("Could not read version.properties file."), e);
             }
         }
     }
@@ -106,7 +105,7 @@ public class Web3jPlugin implements Plugin<Project> {
                 project.getTasks().create(generateTaskName, GenerateContractWrappers.class);
 
         // Set the sources for the generation task
-        task.setSource(buildSourceDirectorySet(sourceSet));
+        task.setSource(buildSourceDirectorySet(project, sourceSet));
         task.setDescription(
                 "Generates " + sourceSet.getName() + " Java contract wrappers from Solidity ABIs.");
 
@@ -137,16 +136,12 @@ public class Web3jPlugin implements Plugin<Project> {
         compileJava.dependsOn(task);
     }
 
-    private SourceDirectorySet buildSourceDirectorySet(final SourceSet sourceSet) {
+    private SourceDirectorySet buildSourceDirectorySet(Project project, final SourceSet sourceSet) {
 
         final String displayName = capitalize((CharSequence) sourceSet.getName()) + " Solidity ABI";
 
         final SourceDirectorySet directorySet =
-                new DefaultSourceDirectorySet(
-                        sourceSet.getName(),
-                        displayName,
-                        new IdentityFileResolver(),
-                        new DefaultDirectoryFileTreeFactory());
+                project.getObjects().sourceDirectorySet(sourceSet.getName(), displayName);
 
         directorySet.srcDir(buildOutputDir(sourceSet));
         directorySet.include("**/*.abi");

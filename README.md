@@ -1,42 +1,15 @@
 web3j Gradle Plugin
 ===================
 
-Gradle plugin that generates [web3j][web3j] Java wrappers from Solidity smart contracts.
+Gradle plugin that generates [Web3j][web3j] Java wrappers from Solidity smart contracts.
 It smoothly integrates with your project's build lifecycle by adding specific tasks that can be also
 run independently.
 
 ## Plugin configuration
 
+To configure the Web3j Gradle Plugin using the plugins DSL or the legacy plugin application, 
+check the [plugin page](https://plugins.gradle.org/plugin/org.web3j). 
 The minimum Gradle version to run the plugin is `5.+`.
-
-### Using the `buildscript` convention
-
-To install the web3j Plugin using the old Gradle `buildscript` convention, you should add 
-the following to the first line of your build file:
-
-```groovy
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'org.web3j:web3j-gradle-plugin:4.5.11'
-    }
-}
-
-apply plugin: 'org.web3j'
-```
-
-### Using the plugins DSL
-
-Alternatively, if you are using the more modern plugins DSL, add the following line to your 
-build file:
-
-```groovy
-plugins {
-    id 'org.web3j' version '4.5.11'
-}
-```
 
 Then run your project containing Solidity contracts:
 
@@ -50,7 +23,7 @@ After applying the plugin, the base directory for generated code (by default
 
 ### Project dependencies
 
-The plugin requires the core [web3j][web3j] dependency to be declared in your project.
+The plugin requires the core [Web3j][web3j] dependency to be declared in your project.
 The minimum version is 4.0 but is recommended to use the 
 [latest available release](https://github.com/web3j/web3j/releases).
 

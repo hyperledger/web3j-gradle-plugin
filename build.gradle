@@ -3,15 +3,15 @@ plugins {
     id 'java-gradle-plugin'
     id 'idea'
     id 'jacoco'
-    id "com.diffplug.gradle.spotless" version "3.25.0"
+    id "com.diffplug.gradle.spotless" version '3.25.0'
     id 'io.codearte.nexus-staging' version '0.21.1'
-    id "de.marcphilipp.nexus-publish" version "0.4.0"
+    id "de.marcphilipp.nexus-publish" version '0.4.0'
     id 'com.gradle.plugin-publish' version '0.10.1'
-    id "de.undercouch.download" version "4.0.0"
-    id "com.jfrog.bintray" version "1.8.4"
+    id "de.undercouch.download" version '4.0.0'
+    id "com.jfrog.bintray" version '1.8.4'
 }
 
-description = 'Gradle plugin providing tasks to generate web3j contracts from Solidity.'
+description = 'Gradle plugin providing tasks to generate Web3j contracts from Solidity.'
 sourceCompatibility = 1.8
 
 ext {
@@ -22,12 +22,10 @@ ext {
 
 apply {
     [
-        'bintray',
         'jacoco',
         'java',
         'javadoc',
         'repositories',
-        'publish',
         'spotless',
     ].each { buildScript ->
         download {
@@ -44,9 +42,6 @@ apply {
 repositories {
     maven {
         url 'https://plugins.gradle.org/m2/'
-    }
-    maven {
-        url 'https://dl.bintray.com/hotkeytlt/maven'
     }
 }
 
@@ -102,6 +97,7 @@ task generateVersionProperties {
         generated.text = "version=$rootProject.version"
     }
 }
+
 tasks.withType(Test) {
     reports.html.destination file("${reporting.baseDir}/${name}")
 }

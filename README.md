@@ -1,4 +1,4 @@
-web3j Gradle Plugin
+Web3j Gradle Plugin
 ===================
 
 Gradle plugin that generates [Web3j][web3j] Java wrappers from Solidity smart contracts.

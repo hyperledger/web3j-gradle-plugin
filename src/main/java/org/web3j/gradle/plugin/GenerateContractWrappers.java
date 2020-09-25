@@ -15,6 +15,7 @@ package org.web3j.gradle.plugin;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.List;
+
 import javax.inject.Inject;
 
 import org.gradle.api.tasks.CacheableTask;
@@ -22,7 +23,6 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.SourceTask;
 import org.gradle.api.tasks.TaskAction;
-import org.gradle.workers.IsolationMode;
 import org.gradle.workers.WorkerExecutor;
 
 @CacheableTask
@@ -30,15 +30,24 @@ public class GenerateContractWrappers extends SourceTask {
 
     private final WorkerExecutor executor;
 
-    @Input private String generatedJavaPackageName;
+    @Input
+    private String generatedJavaPackageName;
 
-    @Input @Optional private Boolean useNativeJavaTypes;
+    @Input
+    @Optional
+    private Boolean useNativeJavaTypes;
 
-    @Input @Optional private List<String> excludedContracts;
+    @Input
+    @Optional
+    private List<String> excludedContracts;
 
-    @Input @Optional private List<String> includedContracts;
+    @Input
+    @Optional
+    private List<String> includedContracts;
 
-    @Input @Optional private Integer addressLength;
+    @Input
+    @Optional
+    private Integer addressLength;
 
     @Inject
     public GenerateContractWrappers(final WorkerExecutor executor) {
@@ -46,7 +55,6 @@ public class GenerateContractWrappers extends SourceTask {
     }
 
     @TaskAction
-    @SuppressWarnings("unused")
     void generateContractWrappers() {
 
         final String outputDir = getOutputs().getFiles().getSingleFile().getAbsolutePath();
@@ -63,18 +71,17 @@ public class GenerateContractWrappers extends SourceTask {
                 final File contractBin =
                         new File(contractAbi.getParentFile(), contractName + ".bin");
 
-                executor.submit(
+                executor.noIsolation().submit(
                         GenerateContractWrapper.class,
-                        configuration -> {
-                            configuration.setIsolationMode(IsolationMode.NONE);
-                            configuration.setParams(
-                                    contractName,
-                                    contractBin,
-                                    contractAbi,
-                                    outputDir,
-                                    packageName,
-                                    addressLength,
-                                    getUseNativeJavaTypes());
+                        (GenerateContractWrapperParameters params) -> {
+//                            FIXME Check Gradle Workers API
+//                            contractName,
+//                            contractBin,
+//                            contractAbi,
+//                            outputDir,
+//                            packageName,
+//                            addressLength,
+//                            getUseNativeJavaTypes();
                         });
             }
         }

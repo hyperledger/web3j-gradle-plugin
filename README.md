@@ -11,36 +11,6 @@ To configure the Web3j Gradle Plugin using the plugins DSL or the legacy plugin 
 check the [plugin page](https://plugins.gradle.org/plugin/org.web3j). 
 The minimum Gradle version to run the plugin is `5.+`.
 
-[//]: # (FIXME Remove these paragraphs after Sokt works without hotkeytlt)
-
-In addition, for the legacy plugin application you will need to add this repository to your `buildscript` configuration:
- 
-```groovy
-buildscript {
-    repositories {
-        ...
-        maven {
-            url 'https://dl.bintray.com/hotkeytlt/maven'
-        }
-    }
-    ...
-}
-```
-
-For the plugins DSL, you will need to add the following configuration in the first line of your `settings.gradle` 
-file:
-
-```groovy
-pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        maven {
-            url 'https://dl.bintray.com/hotkeytlt/maven'
-        }
-    }
-}
-```
-
 Then run your project containing Solidity contracts:
 
 ```

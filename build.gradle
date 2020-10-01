@@ -2,6 +2,8 @@ plugins {
     id 'java'
     id 'java-gradle-plugin'
     id 'idea'
+    id 'maven'
+    id 'maven-publish'
     id 'jacoco'
     id 'com.diffplug.gradle.spotless' version '4.5.1'
     id 'com.gradle.plugin-publish' version '0.12.0'
@@ -43,7 +45,7 @@ repositories {
 }
 
 dependencies {
-    implementation "gradle.plugin.org.web3j.solidity:solidity-gradle-plugin:$solidityPluginVersion"
+    implementation "org.web3j.solidity:solidity-gradle-plugin:$solidityPluginVersion"
     implementation("org.web3j:core:$web3jVersion") {
         exclude group: 'org.slf4j', module: 'slf4j-nop'
     }

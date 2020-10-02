@@ -14,8 +14,6 @@ package org.web3j.gradle.plugin;
 
 import java.io.File;
 
-import javax.inject.Inject;
-
 import org.gradle.api.provider.Property;
 import org.gradle.workers.WorkAction;
 import org.gradle.workers.WorkParameters;
@@ -23,10 +21,6 @@ import org.web3j.codegen.SolidityFunctionWrapperGenerator;
 
 public abstract class GenerateContractWrapper
         implements WorkAction<GenerateContractWrapper.Parameters> {
-
-    @Inject
-    public GenerateContractWrapper() {
-    }
 
     @Override
     public void execute() {

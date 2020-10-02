@@ -22,7 +22,6 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.SourceTask;
 import org.gradle.api.tasks.TaskAction;
-import org.gradle.workers.IsolationMode;
 import org.gradle.workers.WorkerExecutor;
 
 @CacheableTask
@@ -46,7 +45,6 @@ public class GenerateContractWrappers extends SourceTask {
     }
 
     @TaskAction
-    @SuppressWarnings("unused")
     void generateContractWrappers() {
 
         final String outputDir = getOutputs().getFiles().getSingleFile().getAbsolutePath();
@@ -63,19 +61,18 @@ public class GenerateContractWrappers extends SourceTask {
                 final File contractBin =
                         new File(contractAbi.getParentFile(), contractName + ".bin");
 
-                executor.submit(
-                        GenerateContractWrapper.class,
-                        configuration -> {
-                            configuration.setIsolationMode(IsolationMode.NONE);
-                            configuration.setParams(
-                                    contractName,
-                                    contractBin,
-                                    contractAbi,
-                                    outputDir,
-                                    packageName,
-                                    addressLength,
-                                    getUseNativeJavaTypes());
-                        });
+                executor.noIsolation()
+                        .submit(
+                                GenerateContractWrapper.class,
+                                (GenerateContractWrapper.Parameters params) -> {
+                                    params.getContractName().set(contractName);
+                                    params.getContractBin().set(contractBin);
+                                    params.getContractAbi().set(contractAbi);
+                                    params.getOutputDir().set(outputDir);
+                                    params.getPackageName().set(packageName);
+                                    params.getAddressLength().set(addressLength);
+                                    params.getUseNativeJavaTypes().set(useNativeJavaTypes);
+                                });
             }
         }
     }

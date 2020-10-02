@@ -13,61 +13,53 @@
 package org.web3j.gradle.plugin;
 
 import java.io.File;
-import javax.inject.Inject;
+
+import org.gradle.api.provider.Property;
+import org.gradle.workers.WorkAction;
+import org.gradle.workers.WorkParameters;
 
 import org.web3j.codegen.SolidityFunctionWrapperGenerator;
 
-public class GenerateContractWrapper implements Runnable {
-
-    private final String contractName;
-
-    private final File contractBin;
-    private final File contractAbi;
-
-    private final String outputDir;
-    private final String packageName;
-
-    private final int addressLength;
-
-    private final boolean useNativeJavaTypes;
-
-    @Inject
-    public GenerateContractWrapper(
-            final String contractName,
-            final File contractBin,
-            final File contractAbi,
-            final String outputDir,
-            final String packageName,
-            final int addressLength,
-            final boolean useNativeJavaTypes) {
-        this.contractName = contractName;
-        this.contractBin = contractBin;
-        this.contractAbi = contractAbi;
-        this.outputDir = outputDir;
-        this.packageName = packageName;
-        this.addressLength = addressLength;
-        this.useNativeJavaTypes = useNativeJavaTypes;
-    }
+public abstract class GenerateContractWrapper
+        implements WorkAction<GenerateContractWrapper.Parameters> {
 
     @Override
-    public void run() {
-        final String typesFlag = useNativeJavaTypes ? "--javaTypes" : "--solidityTypes";
+    public void execute() {
+        final String typesFlag =
+                getParameters().getUseNativeJavaTypes().get() ? "--javaTypes" : "--solidityTypes";
 
         SolidityFunctionWrapperGenerator.main(
                 new String[] {
                     "--abiFile",
-                    contractAbi.getAbsolutePath(),
+                    getParameters().getContractAbi().get().getAbsolutePath(),
                     "--binFile",
-                    contractBin.getAbsolutePath(),
+                    getParameters().getContractBin().get().getAbsolutePath(),
                     "--outputDir",
-                    outputDir,
+                    getParameters().getOutputDir().get(),
                     "--package",
-                    packageName,
+                    getParameters().getPackageName().get(),
                     "--contractName",
-                    contractName,
+                    getParameters().getContractName().get(),
                     "--addressLength",
-                    String.valueOf(addressLength),
+                    String.valueOf(getParameters().getAddressLength().get()),
                     typesFlag
                 });
+    }
+
+    public interface Parameters extends WorkParameters {
+
+        Property<String> getContractName();
+
+        Property<File> getContractBin();
+
+        Property<File> getContractAbi();
+
+        Property<String> getOutputDir();
+
+        Property<String> getPackageName();
+
+        Property<Integer> getAddressLength();
+
+        Property<Boolean> getUseNativeJavaTypes();
     }
 }

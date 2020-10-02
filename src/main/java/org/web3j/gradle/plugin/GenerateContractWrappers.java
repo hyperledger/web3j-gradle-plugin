@@ -15,7 +15,6 @@ package org.web3j.gradle.plugin;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.List;
-
 import javax.inject.Inject;
 
 import org.gradle.api.tasks.CacheableTask;
@@ -30,24 +29,15 @@ public class GenerateContractWrappers extends SourceTask {
 
     private final WorkerExecutor executor;
 
-    @Input
-    private String generatedJavaPackageName;
+    @Input private String generatedJavaPackageName;
 
-    @Input
-    @Optional
-    private Boolean useNativeJavaTypes;
+    @Input @Optional private Boolean useNativeJavaTypes;
 
-    @Input
-    @Optional
-    private List<String> excludedContracts;
+    @Input @Optional private List<String> excludedContracts;
 
-    @Input
-    @Optional
-    private List<String> includedContracts;
+    @Input @Optional private List<String> includedContracts;
 
-    @Input
-    @Optional
-    private Integer addressLength;
+    @Input @Optional private Integer addressLength;
 
     @Inject
     public GenerateContractWrappers(final WorkerExecutor executor) {

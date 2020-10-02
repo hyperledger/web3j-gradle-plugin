@@ -17,6 +17,7 @@ import java.io.File;
 import org.gradle.api.provider.Property;
 import org.gradle.workers.WorkAction;
 import org.gradle.workers.WorkParameters;
+
 import org.web3j.codegen.SolidityFunctionWrapperGenerator;
 
 public abstract class GenerateContractWrapper
@@ -28,20 +29,20 @@ public abstract class GenerateContractWrapper
                 getParameters().getUseNativeJavaTypes().get() ? "--javaTypes" : "--solidityTypes";
 
         SolidityFunctionWrapperGenerator.main(
-                new String[]{
-                        "--abiFile",
-                        getParameters().getContractAbi().get().getAbsolutePath(),
-                        "--binFile",
-                        getParameters().getContractBin().get().getAbsolutePath(),
-                        "--outputDir",
-                        getParameters().getOutputDir().get(),
-                        "--package",
-                        getParameters().getPackageName().get(),
-                        "--contractName",
-                        getParameters().getContractName().get(),
-                        "--addressLength",
-                        String.valueOf(getParameters().getAddressLength().get()),
-                        typesFlag
+                new String[] {
+                    "--abiFile",
+                    getParameters().getContractAbi().get().getAbsolutePath(),
+                    "--binFile",
+                    getParameters().getContractBin().get().getAbsolutePath(),
+                    "--outputDir",
+                    getParameters().getOutputDir().get(),
+                    "--package",
+                    getParameters().getPackageName().get(),
+                    "--contractName",
+                    getParameters().getContractName().get(),
+                    "--addressLength",
+                    String.valueOf(getParameters().getAddressLength().get()),
+                    typesFlag
                 });
     }
 

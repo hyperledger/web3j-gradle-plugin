@@ -21,18 +21,6 @@ After applying the plugin, the base directory for generated code (by default
 `$buildDir/generated/source/web3j`) will contain a directory for each source set 
 (by default `main` and `test`) containing the smart contract wrappers Java classes.
 
-### Project dependencies
-
-The plugin requires the core [Web3j][web3j] dependency to be declared in your project.
-The minimum version is 4.0 but is recommended to use the 
-[latest available release](https://github.com/web3j/web3j/releases).
-
-```groovy
-dependencies {
-    implementation "org.web3j:core:$web3jVersion"
-}
-```
-
 ## Code generation
 
 The `web3j` DSL allows to configure the generated code, e.g.:

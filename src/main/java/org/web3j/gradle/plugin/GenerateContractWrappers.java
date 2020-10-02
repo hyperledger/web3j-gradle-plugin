@@ -71,18 +71,18 @@ public class GenerateContractWrappers extends SourceTask {
                 final File contractBin =
                         new File(contractAbi.getParentFile(), contractName + ".bin");
 
-                executor.noIsolation().submit(
-                        GenerateContractWrapper.class,
-                        (GenerateContractWrapperParameters params) -> {
-//                            FIXME Check Gradle Workers API
-//                            contractName,
-//                            contractBin,
-//                            contractAbi,
-//                            outputDir,
-//                            packageName,
-//                            addressLength,
-//                            getUseNativeJavaTypes();
-                        });
+                executor.noIsolation()
+                        .submit(
+                                GenerateContractWrapper.class,
+                                (GenerateContractWrapper.Parameters params) -> {
+                                    params.getContractName().set(contractName);
+                                    params.getContractBin().set(contractBin);
+                                    params.getContractAbi().set(contractAbi);
+                                    params.getOutputDir().set(outputDir);
+                                    params.getPackageName().set(packageName);
+                                    params.getAddressLength().set(addressLength);
+                                    params.getUseNativeJavaTypes().set(useNativeJavaTypes);
+                                });
             }
         }
     }

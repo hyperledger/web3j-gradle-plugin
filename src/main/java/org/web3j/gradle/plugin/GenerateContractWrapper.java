@@ -12,12 +12,17 @@
  */
 package org.web3j.gradle.plugin;
 
+import java.io.File;
+
 import javax.inject.Inject;
 
+import org.gradle.api.provider.Property;
 import org.gradle.workers.WorkAction;
+import org.gradle.workers.WorkParameters;
 import org.web3j.codegen.SolidityFunctionWrapperGenerator;
 
-public abstract class GenerateContractWrapper implements WorkAction<GenerateContractWrapperParameters> {
+public abstract class GenerateContractWrapper
+        implements WorkAction<GenerateContractWrapper.Parameters> {
 
     @Inject
     public GenerateContractWrapper() {
@@ -25,24 +30,41 @@ public abstract class GenerateContractWrapper implements WorkAction<GenerateCont
 
     @Override
     public void execute() {
-        final String typesFlag = getParameters().getUseNativeJavaTypes()
-                ? "--javaTypes" : "--solidityTypes";
+        final String typesFlag =
+                getParameters().getUseNativeJavaTypes().get() ? "--javaTypes" : "--solidityTypes";
 
         SolidityFunctionWrapperGenerator.main(
                 new String[]{
                         "--abiFile",
-                        getParameters().getContractAbi().getAbsolutePath(),
+                        getParameters().getContractAbi().get().getAbsolutePath(),
                         "--binFile",
-                        getParameters().getContractBin().getAbsolutePath(),
+                        getParameters().getContractBin().get().getAbsolutePath(),
                         "--outputDir",
-                        getParameters().getOutputDir(),
+                        getParameters().getOutputDir().get(),
                         "--package",
-                        getParameters().getPackageName(),
+                        getParameters().getPackageName().get(),
                         "--contractName",
-                        getParameters().getContractName(),
+                        getParameters().getContractName().get(),
                         "--addressLength",
-                        String.valueOf(getParameters().getAddressLength()),
+                        String.valueOf(getParameters().getAddressLength().get()),
                         typesFlag
                 });
+    }
+
+    public interface Parameters extends WorkParameters {
+
+        Property<String> getContractName();
+
+        Property<File> getContractBin();
+
+        Property<File> getContractAbi();
+
+        Property<String> getOutputDir();
+
+        Property<String> getPackageName();
+
+        Property<Integer> getAddressLength();
+
+        Property<Boolean> getUseNativeJavaTypes();
     }
 }

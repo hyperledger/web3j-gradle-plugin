@@ -58,7 +58,7 @@ public class Web3jPlugin implements Plugin<Project> {
         project.getExtensions().create(Web3jExtension.NAME, Web3jExtension.class, project);
     }
 
-    private String getProjectVersion() {
+    protected String getProjectVersion() {
         final URL versionPropsFile = getClass().getClassLoader().getResource("version.properties");
 
         if (versionPropsFile == null) {

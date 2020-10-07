@@ -136,7 +136,8 @@ public class Web3jPlugin implements Plugin<Project> {
         compileJava.dependsOn(task);
     }
 
-    private SourceDirectorySet buildSourceDirectorySet(Project project, final SourceSet sourceSet) {
+    protected SourceDirectorySet buildSourceDirectorySet(
+            Project project, final SourceSet sourceSet) {
 
         final String displayName = capitalize((CharSequence) sourceSet.getName()) + " Solidity ABI";
 

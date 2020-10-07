@@ -18,7 +18,7 @@ Then run your project containing Solidity contracts:
 ```
 
 After applying the plugin, the base directory for generated code (by default 
-`$buildDir/generated/source/web3j`) will contain a directory for each source set 
+`$buildDir/generated/sources/web3j`) will contain a directory for each source set 
 (by default `main` and `test`) containing the smart contract wrappers Java classes.
 
 ## Code generation
@@ -39,7 +39,7 @@ The properties accepted by the DSL are listed in the following table:
 |  Name                   | Type       | Default value                       | Description |
 |-------------------------|:----------:|:-----------------------------------:|-------------|
 | `generatedPackageName`  | `String`   | `${group}.web3j` or `org.web3j.{0}` | Generated contract wrappers package. |
-| `generatedFilesBaseDir` | `String`   | `$buildDir/generated/source/web3j`  | Generated Java code output directory. |
+| `generatedFilesBaseDir` | `String`   | `$buildDir/generated/sources/web3j`  | Generated Java code output directory. |
 | `excludedContracts`     | `String[]` | `[]`                                | Excluded contract names from wrapper generation. |
 | `includedContracts`     | `String[]` | `[]`                                | Included contract names from wrapper generation. Has preference over `excludedContracts`. |
 | `useNativeJavaTypes`    | `Boolean`  | `true`                              | Generate smart contract wrappers using native Java types. |

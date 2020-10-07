@@ -89,7 +89,7 @@ public class Web3jPluginTest {
         assertEquals(SUCCESS, success.task(":generateContractWrappers").getOutcome());
 
         final File web3jContractsDir =
-                new File(testProjectDir.getRoot(), "build/generated/source/web3j/main/java");
+                new File(testProjectDir.getRoot(), "build/generated/sources/web3j/main/java");
 
         final File generatedContract =
                 new File(web3jContractsDir, "org/web3j/test/StandardToken.java");
@@ -147,7 +147,7 @@ public class Web3jPluginTest {
         assertEquals(SUCCESS, success.task(":generateContractWrappers").getOutcome());
 
         final File web3jContractsDir =
-                new File(testProjectDir.getRoot(), "build/generated/source/web3j/main/java");
+                new File(testProjectDir.getRoot(), "build/generated/sources/web3j/main/java");
 
         final File generatedContract =
                 new File(web3jContractsDir, "org/web3j/test/StandardToken.java");

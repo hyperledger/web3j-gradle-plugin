@@ -101,7 +101,7 @@ public class Web3jExtension {
 
     public Web3jExtension(final Project project) {
         generatedFilesBaseDir =
-                project.getBuildDir().getAbsolutePath() + "/generated/source/" + NAME;
+                project.getBuildDir().getAbsolutePath() + "/generated/sources/" + NAME;
 
         // Use the project's group name in generated package
         generatedPackageName = getDefaultGeneratedPackageName(project);

@@ -21,6 +21,7 @@ import org.codehaus.groovy.runtime.InvokerHelper;
 import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.Task;
 import org.gradle.api.file.SourceDirectorySet;
 import org.gradle.api.internal.plugins.PluginApplicationException;
 import org.gradle.api.plugins.Convention;
@@ -29,6 +30,7 @@ import org.gradle.api.plugins.JavaPluginConvention;
 import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.SourceTask;
+import org.gradle.api.tasks.TaskProvider;
 import org.gradle.internal.Describables;
 
 import org.web3j.solidity.gradle.plugin.SolidityCompile;
@@ -99,39 +101,50 @@ public class Web3jPlugin implements Plugin<Project> {
 
         final String generateTaskName = "generate" + srcSetName + "ContractWrappers";
 
-        final GenerateContractWrappers task =
-                project.getTasks().create(generateTaskName, GenerateContractWrappers.class);
-
-        // Set the sources for the generation task
-        task.setSource(buildSourceDirectorySet(project, sourceSet));
-        task.setDescription(
-                "Generates " + sourceSet.getName() + " Java contract wrappers from Solidity ABIs.");
-
-        // Set the task output directory
-        task.getOutputs().dir(outputDir);
-
-        // Set the task generated package name, classpath and group
-        task.setGeneratedJavaPackageName(extension.getGeneratedPackageName());
-        task.setUseNativeJavaTypes(extension.getUseNativeJavaTypes());
-        task.setGroup(Web3jExtension.NAME);
-
-        // Set task excluded contracts
-        task.setExcludedContracts(extension.getExcludedContracts());
-        task.setIncludedContracts(extension.getIncludedContracts());
-
-        // Set the contract addresses length (default 160)
-        task.setAddressLength(extension.getAddressBitLength());
-
-        task.dependsOn(
+        final TaskProvider<GenerateContractWrappers> taskProvider =
                 project.getTasks()
-                        .withType(SolidityCompile.class)
-                        .named("compile" + srcSetName + "Solidity"));
+                        .register(
+                                generateTaskName,
+                                GenerateContractWrappers.class,
+                                task -> {
+                                    // Set the sources for the generation task
+                                    task.setSource(buildSourceDirectorySet(project, sourceSet));
+                                    task.setDescription(
+                                            "Generates "
+                                                    + sourceSet.getName()
+                                                    + " Java contract wrappers from Solidity ABIs.");
 
-        final SourceTask compileJava =
-                (SourceTask) project.getTasks().getByName("compile" + srcSetName + "Java");
+                                    // Set the task output directory
+                                    task.getOutputs().dir(outputDir);
 
-        compileJava.source(task.getOutputs().getFiles().getSingleFile());
-        compileJava.dependsOn(task);
+                                    // Set the task generated package name, classpath and group
+                                    task.setGeneratedJavaPackageName(
+                                            extension.getGeneratedPackageName());
+                                    task.setUseNativeJavaTypes(extension.getUseNativeJavaTypes());
+                                    task.setGroup(Web3jExtension.NAME);
+
+                                    // Set task excluded contracts
+                                    task.setExcludedContracts(extension.getExcludedContracts());
+                                    task.setIncludedContracts(extension.getIncludedContracts());
+
+                                    // Set the contract addresses length (default 160)
+                                    task.setAddressLength(extension.getAddressBitLength());
+
+                                    task.dependsOn(
+                                            project.getTasks()
+                                                    .withType(SolidityCompile.class)
+                                                    .named("compile" + srcSetName + "Solidity"));
+                                });
+
+        final TaskProvider<Task> compileJava =
+                project.getTasks().named("compile" + srcSetName + "Java");
+
+        compileJava.configure(
+                task -> {
+                    ((SourceTask) task)
+                            .source(taskProvider.get().getOutputs().getFiles().getSingleFile());
+                    task.dependsOn(taskProvider);
+                });
     }
 
     protected SourceDirectorySet buildSourceDirectorySet(

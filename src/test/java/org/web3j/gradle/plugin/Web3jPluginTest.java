@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -47,6 +48,7 @@ public class Web3jPluginTest {
         sourceDir = new File(resource.getFile()).getParentFile();
     }
 
+    @Ignore
     @Test
     public void generateContractWrappersExcluding() throws IOException {
         final String buildFileContent =
@@ -106,6 +108,7 @@ public class Web3jPluginTest {
     }
 
     @Test
+    @Ignore
     public void generateContractWrappersIncluding() throws IOException {
         final String buildFileContent =
                 "plugins {\n"

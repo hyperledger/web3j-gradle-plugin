@@ -40,8 +40,6 @@ import static org.codehaus.groovy.runtime.StringGroovyMethods.capitalize;
 /** Gradle plugin class for web3j code generation from Solidity contracts. */
 public class Web3jPlugin implements Plugin<Project> {
 
-    static final String ID = "org.web3j";
-
     public void apply(final Project target) {
         target.getPluginManager().apply(JavaPlugin.class);
         target.getPluginManager().apply(SolidityPlugin.class);

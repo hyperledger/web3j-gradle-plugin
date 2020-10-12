@@ -15,8 +15,6 @@ sourceCompatibility = 1.8
 
 ext {
     web3jVersion = version
-    solidityPluginVersion = '0.2.4'
-    junitVersion = '4.12'
 }
 
 apply {
@@ -53,6 +51,16 @@ dependencies {
         exclude group: 'org.slf4j', module: 'slf4j-nop'
     }
     testCompile "junit:junit:$junitVersion"
+
+    configurations.all {
+        resolutionStrategy {
+            force(group: "org.jetbrains.kotlin", name: "kotlin-reflect", version: kotlinVersion)
+            force(group: "org.jetbrains.kotlin", name: "kotlin-stdlib", version: kotlinVersion)
+            force(group: "org.jetbrains.kotlin", name: "kotlin-stdlib-common", version: kotlinVersion)
+            force(group: "org.jetbrains.kotlin", name: "kotlin-stdlib-jdk7", version: kotlinVersion)
+            force(group: "org.jetbrains.kotlin", name: "kotlin-stdlib-jdk8", version: kotlinVersion)
+        }
+    }
 }
 
 gradlePlugin {

@@ -49,21 +49,20 @@ open class GenerateContractWrappers @Inject constructor(
     fun generateContractWrappers() {
         val outputDir = outputs.files.singleFile.absolutePath
         for (contractAbi in source) {
-            val contractName = contractAbi.name.replace("\\.abi".toRegex(), "")
+            val contractName = contractAbi.name.removeSuffix(".abi")
             if (shouldGenerateContract(contractName)) {
                 val packageName = MessageFormat.format(
                         generatedJavaPackageName, contractName.toLowerCase())
                 val contractBin = File(contractAbi.parentFile, "$contractName.bin")
-                executor.noIsolation()
-                        .submit(GenerateContractWrapper::class.java) {
-                            it.contractName.set(contractName)
-                            it.contractBin.set(contractBin)
-                            it.contractAbi.set(contractAbi)
-                            it.outputDir.set(outputDir)
-                            it.packageName.set(packageName)
-                            it.addressLength.set(addressLength)
-                            it.useNativeJavaTypes.set(useNativeJavaTypes)
-                        }
+                executor.noIsolation().submit(GenerateContractWrapper::class.java) {
+                    it.contractName.set(contractName)
+                    it.contractBin.set(contractBin)
+                    it.contractAbi.set(contractAbi)
+                    it.outputDir.set(outputDir)
+                    it.packageName.set(packageName)
+                    it.addressLength.set(addressLength)
+                    it.useNativeJavaTypes.set(useNativeJavaTypes)
+                }
             }
         }
     }

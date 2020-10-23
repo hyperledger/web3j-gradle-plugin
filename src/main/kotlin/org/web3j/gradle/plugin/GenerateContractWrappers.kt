@@ -24,7 +24,9 @@ import java.text.MessageFormat
 import javax.inject.Inject
 
 @CacheableTask
-open class GenerateContractWrappers @Inject constructor(private val executor: WorkerExecutor) : SourceTask() {
+open class GenerateContractWrappers @Inject constructor(
+    private val executor: WorkerExecutor
+) : SourceTask() {
 
     @Input
     lateinit var generatedJavaPackageName: String

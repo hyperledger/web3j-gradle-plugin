@@ -21,7 +21,7 @@ open class Web3jExtension(project: Project) {
      * Generated package name for web3j contract wrappers. Accepts a [java.text.MessageFormat]
      * string with a unique parameter (i.e. {0} ), formatted as the contract name in lower case.
      */
-    var generatedPackageName: String = getDefaultGeneratedPackageName(project)
+    open var generatedPackageName: String = getDefaultGeneratedPackageName(project)
 
     /** Base directory for generated Java files.  */
     var generatedFilesBaseDir = project.buildDir.absolutePath + "/generated/sources/" + NAME
@@ -38,7 +38,7 @@ open class Web3jExtension(project: Project) {
     /** Bit length for network addresses.  */
     var addressBitLength: Int = Address.DEFAULT_LENGTH / java.lang.Byte.SIZE
 
-    protected fun getDefaultGeneratedPackageName(project: Project): String {
+    protected open fun getDefaultGeneratedPackageName(project: Project): String {
         val defaultPackageName: String
         val projectGroup = project.group.toString()
         defaultPackageName = if (projectGroup.isNotEmpty()) {

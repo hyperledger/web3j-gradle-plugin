@@ -13,11 +13,10 @@
 package org.web3j.gradle.plugin
 
 import org.codehaus.groovy.runtime.InvokerHelper
-import org.codehaus.groovy.runtime.StringGroovyMethods
+import org.codehaus.groovy.runtime.StringGroovyMethods.capitalize
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.internal.plugins.PluginApplicationException
 import org.gradle.api.plugins.Convention
@@ -31,6 +30,7 @@ import org.web3j.solidity.gradle.plugin.SolidityPlugin
 import org.web3j.solidity.gradle.plugin.SoliditySourceSet
 import java.io.File
 import java.io.IOException
+import java.nio.file.Paths
 import java.util.Properties
 
 /** Gradle plugin class for web3j code generation from Solidity contracts.  */
@@ -51,11 +51,11 @@ open class Web3jPlugin : Plugin<Project> {
         }
     }
 
-    protected fun registerExtensions(project: Project) {
+    protected open fun registerExtensions(project: Project) {
         project.extensions.create(Web3jExtension.NAME, Web3jExtension::class.java, project)
     }
 
-    protected val projectVersion: String
+    protected open val projectVersion: String
         get() {
             val versionPropsFile = javaClass.classLoader.getResource("version.properties")
             return if (versionPropsFile == null) {
@@ -63,9 +63,9 @@ open class Web3jPlugin : Plugin<Project> {
                         Describables.of("No version.properties file found in the classpath."), null)
             } else {
                 try {
-                    val versionProps = Properties()
-                    versionProps.load(versionPropsFile.openStream())
-                    versionProps.getProperty("version")
+                    Properties().apply {
+                        load(versionPropsFile.openStream())
+                    }.getProperty("version")
                 } catch (e: IOException) {
                     throw PluginApplicationException(
                             Describables.of("Could not read version.properties file."), e)
@@ -88,17 +88,17 @@ open class Web3jPlugin : Plugin<Project> {
 
         // Add source set to the project Java source sets
         sourceSet.java.srcDir(outputDir)
-        val srcSetName = if (sourceSet.name == "main") "" else StringGroovyMethods.capitalize(sourceSet.name as CharSequence)
+
+        val srcSetName = if (sourceSet.name == "main") "" else capitalize(sourceSet.name as CharSequence)
         val generateTaskName = "generate" + srcSetName + "ContractWrappers"
+
         val taskProvider = project.tasks.register(
                 generateTaskName,
                 GenerateContractWrappers::class.java
         ) { task: GenerateContractWrappers ->
             // Set the sources for the generation task
             task.source = buildSourceDirectorySet(project, sourceSet)
-            task.description = ("Generates " +
-                    sourceSet.name +
-                    " Java contract wrappers from Solidity ABIs.")
+            task.description = "Generates ${sourceSet.name} Java contract wrappers from Solidity ABIs."
 
             // Set the task output directory
             task.outputs.dir(outputDir)
@@ -119,11 +119,9 @@ open class Web3jPlugin : Plugin<Project> {
                             .withType(SolidityCompile::class.java)
                             .named("compile" + srcSetName + "Solidity"))
         }
-        val compileJava = project.tasks.named("compile" + srcSetName + "Java")
-        compileJava.configure { task: Task ->
-            (task as SourceTask)
-                    .source(taskProvider.get().outputs.files.singleFile)
-            task.dependsOn(taskProvider)
+        project.tasks.named("compile" + srcSetName + "Java", SourceTask::class.java).configure {
+            it.source(taskProvider.get().outputs.files.singleFile)
+            it.dependsOn(taskProvider)
         }
     }
 
@@ -131,7 +129,7 @@ open class Web3jPlugin : Plugin<Project> {
         project: Project,
         sourceSet: SourceSet
     ): SourceDirectorySet {
-        val displayName = StringGroovyMethods.capitalize(sourceSet.name as CharSequence) + " Solidity ABI"
+        val displayName = capitalize(sourceSet.name as CharSequence) + " Solidity ABI"
         return project.objects.sourceDirectorySet(sourceSet.name, displayName).apply {
             srcDir(buildOutputDir(sourceSet))
             include("**/*.abi")
@@ -142,7 +140,7 @@ open class Web3jPlugin : Plugin<Project> {
         if (extension.generatedFilesBaseDir.isEmpty()) {
             throw InvalidUserDataException("Generated web3j package cannot be empty")
         }
-        return File(extension.generatedFilesBaseDir + "/" + sourceSet.name + "/java")
+        return Paths.get(extension.generatedFilesBaseDir, sourceSet.name, "java").toFile()
     }
 
     protected fun buildOutputDir(sourceSet: SourceSet?): File {

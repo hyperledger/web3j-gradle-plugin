@@ -32,7 +32,6 @@ open class GenerateContractWrappers @Inject constructor(
     lateinit var generatedJavaPackageName: String
 
     @Input
-    @Optional
     var useNativeJavaTypes: Boolean = true
 
     @Input
@@ -44,7 +43,6 @@ open class GenerateContractWrappers @Inject constructor(
     lateinit var includedContracts: List<String>
 
     @Input
-    @Optional
     var addressLength: Int = Address.DEFAULT_LENGTH / Byte.SIZE_BITS
 
     @TaskAction

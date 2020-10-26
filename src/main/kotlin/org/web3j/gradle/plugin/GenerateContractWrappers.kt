@@ -67,11 +67,6 @@ open class GenerateContractWrappers @Inject constructor(
         }
     }
 
-    private fun shouldGenerateContract(contractName: String): Boolean {
-        return if (includedContracts.isEmpty()) {
-            !excludedContracts.contains(contractName)
-        } else {
-            includedContracts.contains(contractName)
-        }
-    }
+    private fun shouldGenerateContract(contractName: String): Boolean = 
+            includedContracts.contains(contractName) || !excludedContracts.contains(contractName)
 }

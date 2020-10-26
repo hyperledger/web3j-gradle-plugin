@@ -77,10 +77,8 @@ open class Web3jPlugin : Plugin<Project> {
      * Configures code generation tasks for the Solidity source sets defined in the project (e.g.
      * main, test).
      *
-     *
-     * The generated task name for the `main` source set will be `
-     * generateContractWrappers`, and for `test` `generateTestContractWrappers
-    ` * .
+     * The generated task name for the `main` source set will be
+     * `generateContractWrappers`, and for `test` `generateTestContractWrappers`.
      */
     private fun configure(project: Project, sourceSet: SourceSet) {
         val extension = InvokerHelper.getProperty(project, Web3jExtension.NAME) as Web3jExtension

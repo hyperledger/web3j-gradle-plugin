@@ -13,16 +13,21 @@
 package org.web3j.gradle.plugin;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.List;
 import javax.inject.Inject;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.SourceTask;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.workers.WorkerExecutor;
+
+import org.web3j.protocol.ObjectMapperFactory;
+import org.web3j.protocol.core.methods.response.AbiDefinition;
 
 @CacheableTask
 public class GenerateContractWrappers extends SourceTask {
@@ -45,7 +50,7 @@ public class GenerateContractWrappers extends SourceTask {
     }
 
     @TaskAction
-    void generateContractWrappers() {
+    void generateContractWrappers() throws IOException {
 
         final String outputDir = getOutputs().getFiles().getSingleFile().getAbsolutePath();
 
@@ -53,7 +58,7 @@ public class GenerateContractWrappers extends SourceTask {
 
             final String contractName = contractAbi.getName().replaceAll("\\.abi", "");
 
-            if (shouldGenerateContract(contractName)) {
+            if (shouldGenerateContract(contractName) && !abiIsEmpty(contractAbi)) {
                 final String packageName =
                         MessageFormat.format(
                                 getGeneratedJavaPackageName(), contractName.toLowerCase());
@@ -77,7 +82,14 @@ public class GenerateContractWrappers extends SourceTask {
         }
     }
 
+    private boolean abiIsEmpty(File abi) throws IOException {
+        ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
+        AbiDefinition[] abiDefinition = objectMapper.readValue(abi, AbiDefinition[].class);
+        return abiDefinition.length == 0;
+    }
+
     private boolean shouldGenerateContract(final String contractName) {
+
         if (includedContracts == null || includedContracts.isEmpty()) {
             return excludedContracts == null || !excludedContracts.contains(contractName);
         } else {

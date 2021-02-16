@@ -27,10 +27,7 @@ import org.gradle.api.internal.plugins.PluginApplicationException;
 import org.gradle.api.plugins.Convention;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
-import org.gradle.api.tasks.SourceSet;
-import org.gradle.api.tasks.SourceSetContainer;
-import org.gradle.api.tasks.SourceTask;
-import org.gradle.api.tasks.TaskProvider;
+import org.gradle.api.tasks.*;
 import org.gradle.internal.Describables;
 
 import org.web3j.solidity.gradle.plugin.SolidityCompile;
@@ -150,14 +147,13 @@ public class Web3jPlugin implements Plugin<Project> {
     protected SourceDirectorySet buildSourceDirectorySet(
             Project project, final SourceSet sourceSet) {
 
-        final String displayName = capitalize((CharSequence) sourceSet.getName()) + " Solidity ABI";
+        final String displayName = capitalize((CharSequence) sourceSet.getName()) + " Solidity BIN";
 
         final SourceDirectorySet directorySet =
                 project.getObjects().sourceDirectorySet(sourceSet.getName(), displayName);
 
         directorySet.srcDir(buildOutputDir(sourceSet));
-        directorySet.include("**/*.abi");
-
+        directorySet.include("**/*.bin");
         return directorySet;
     }
 

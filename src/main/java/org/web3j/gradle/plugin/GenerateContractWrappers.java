@@ -49,17 +49,17 @@ public class GenerateContractWrappers extends SourceTask {
 
         final String outputDir = getOutputs().getFiles().getSingleFile().getAbsolutePath();
 
-        for (final File contractAbi : getSource()) {
+        for (final File contractBin : getSource()) {
 
-            final String contractName = contractAbi.getName().replaceAll("\\.abi", "");
+            final String contractName = contractBin.getName().replaceAll("\\.bin", "");
 
             if (shouldGenerateContract(contractName)) {
                 final String packageName =
                         MessageFormat.format(
                                 getGeneratedJavaPackageName(), contractName.toLowerCase());
 
-                final File contractBin =
-                        new File(contractAbi.getParentFile(), contractName + ".bin");
+                final File contractAbi =
+                        new File(contractBin.getParentFile(), contractName + ".abi");
 
                 executor.noIsolation()
                         .submit(

@@ -14,6 +14,7 @@ package org.web3j.gradle.plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 
@@ -67,8 +68,10 @@ public class Web3jPlugin implements Plugin<Project> {
         } else {
             try {
                 final Properties versionProps = new Properties();
-                versionProps.load(versionPropsFile.openStream());
-                return versionProps.getProperty("version");
+                try (InputStream inStream = versionPropsFile.openStream()) {
+                    versionProps.load(inStream);
+                    return versionProps.getProperty("version");
+                }
             } catch (IOException e) {
                 throw new PluginApplicationException(
                         Describables.of("Could not read version.properties file."), e);

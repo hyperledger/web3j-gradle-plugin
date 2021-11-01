@@ -167,7 +167,12 @@ public class Web3jPlugin implements Plugin<Project> {
             throw new InvalidUserDataException("Generated web3j package cannot be empty");
         }
 
-        return new File(extension.getGeneratedFilesBaseDir() + "/" + sourceSet.getName() + "/java");
+        return new File(
+                extension.getGeneratedFilesBaseDir()
+                        + File.pathSeparator
+                        + sourceSet.getName()
+                        + File.pathSeparator
+                        + "java");
     }
 
     protected File buildOutputDir(final SourceSet sourceSet) {

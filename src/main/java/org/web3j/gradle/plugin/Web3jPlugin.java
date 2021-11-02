@@ -150,14 +150,13 @@ public class Web3jPlugin implements Plugin<Project> {
     protected SourceDirectorySet buildSourceDirectorySet(
             Project project, final SourceSet sourceSet) {
 
-        final String displayName = capitalize((CharSequence) sourceSet.getName()) + " Solidity ABI";
+        final String displayName = capitalize((CharSequence) sourceSet.getName()) + " Solidity BIN";
 
         final SourceDirectorySet directorySet =
                 project.getObjects().sourceDirectorySet(sourceSet.getName(), displayName);
 
         directorySet.srcDir(buildOutputDir(sourceSet));
-        directorySet.include("**/*.abi");
-
+        directorySet.include("**/*.bin");
         return directorySet;
     }
 

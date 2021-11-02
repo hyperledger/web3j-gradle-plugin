@@ -51,7 +51,7 @@ public class GenerateContractWrappers extends SourceTask {
 
         for (final File contractBin : getSource()) {
 
-            final String contractName = contractBin.getName().replaceAll("\\.bin", "");
+            final String contractName = contractBin.getName().replace(".bin", "");
 
             if (shouldGenerateContract(contractName)) {
                 final String packageName =

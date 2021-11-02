@@ -27,7 +27,10 @@ import org.gradle.api.internal.plugins.PluginApplicationException;
 import org.gradle.api.plugins.Convention;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.JavaPluginConvention;
-import org.gradle.api.tasks.*;
+import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.tasks.SourceSetContainer;
+import org.gradle.api.tasks.SourceTask;
+import org.gradle.api.tasks.TaskProvider;
 import org.gradle.internal.Describables;
 
 import org.web3j.solidity.gradle.plugin.SolidityCompile;

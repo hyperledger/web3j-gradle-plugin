@@ -171,9 +171,9 @@ public class Web3jPlugin implements Plugin<Project> {
 
         return new File(
                 extension.getGeneratedFilesBaseDir()
-                        + File.pathSeparator
+                        + File.separator
                         + sourceSet.getName()
-                        + File.pathSeparator
+                        + File.separator
                         + "java");
     }
 

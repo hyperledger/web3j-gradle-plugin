@@ -83,6 +83,17 @@ documentation to configure the smart contracts source code directories.
 Output directories for generated smart contract wrappers Java code 
 will be added to your build automatically.
 
+As already mentioned in [Solidity Plugin](https://github.com/web3j/solidity-gradle-plugin) `README.md`, it makes use 
+of the [Node plugin](https://github.com/node-gradle/gradle-node-plugin) to resolve third-party contract dependencies. 
+So in order to resolve the dependencies a node project structure will be created. To choose for example where the 
+`node_modules` and `.json files` should be placed, or protected by any `clean` task, as it is mentioned on [Solidity Plugin](https://github.com/web3j/solidity-gradle-plugin) 
+add the following snippet to your `build.gradle` file:
+```
+node {
+    nodeProjectDir = file("my/custom/node/directory")
+}
+```
+
 ## Plugin tasks
 
 The [Java Plugin](https://docs.gradle.org/current/userguide/java_plugin.html)

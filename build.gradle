@@ -2,16 +2,15 @@ plugins {
     id 'java'
     id 'java-gradle-plugin'
     id 'idea'
-    id 'maven'
     id 'maven-publish'
     id 'jacoco'
     id 'com.diffplug.gradle.spotless' version '4.5.1'
-    id 'com.gradle.plugin-publish' version '0.12.0'
+    id 'com.gradle.plugin-publish' version '1.2.0'
     id 'de.undercouch.download' version '4.1.1'
 }
 
 description = 'Gradle plugin providing tasks to generate Web3j contracts from Solidity.'
-sourceCompatibility = 1.8
+sourceCompatibility = 17
 
 ext {
     web3jVersion = version
@@ -50,7 +49,7 @@ dependencies {
     implementation("org.web3j:codegen:$web3jVersion") {
         exclude group: 'org.slf4j', module: 'slf4j-nop'
     }
-    testCompile "junit:junit:$junitVersion"
+    testImplementation "junit:junit:$junitVersion"
 
     configurations.all {
         resolutionStrategy {
@@ -64,31 +63,24 @@ dependencies {
 }
 
 gradlePlugin {
+    website = 'https://web3j.io/'
+    vcsUrl = 'https://github.com/web3j/web3j-gradle-plugin'
+    description = 'Gradle plugin providing tasks to generate web3j contracts from Solidity.'
     plugins {
         web3j {
+            displayName = project.description
+            tags.set([
+                'solidity',
+                'ethereum',
+                'web3.js',
+                'web3j'
+            ])
             id = 'org.web3j'
             implementationClass = 'org.web3j.gradle.plugin.Web3jPlugin'
         }
     }
 }
 
-pluginBundle {
-    website = 'https://web3j.io/'
-    vcsUrl = 'https://github.com/web3j/web3j-gradle-plugin'
-    description = 'Gradle plugin providing tasks to generate web3j contracts from Solidity.'
-    tags = [
-        'solidity',
-        'ethereum',
-        'web3.js',
-        'web3j'
-    ]
-    plugins {
-        web3j {
-            // id is captured from java-gradle-plugin configuration
-            displayName = project.description
-        }
-    }
-}
 def generatedResources = "$buildDir/generated-resources/main"
 
 sourceSets {

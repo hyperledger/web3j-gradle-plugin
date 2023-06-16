@@ -65,10 +65,10 @@ dependencies {
 gradlePlugin {
     website = 'https://web3j.io/'
     vcsUrl = 'https://github.com/web3j/web3j-gradle-plugin'
-    description = 'Gradle plugin providing tasks to generate web3j contracts from Solidity.'
     plugins {
         web3j {
-            displayName = project.description
+            description = 'Gradle plugin providing tasks to generate web3j contracts from Solidity.'
+            displayName = description
             tags.set([
                 'solidity',
                 'ethereum',

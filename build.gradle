@@ -39,6 +39,9 @@ repositories {
     maven {
         url 'https://plugins.gradle.org/m2/'
     }
+    maven {
+        url 'https://artifacts.consensys.net/public/maven/maven/'
+    }
 }
 
 dependencies {

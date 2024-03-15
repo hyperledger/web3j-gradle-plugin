@@ -72,7 +72,10 @@ public class Web3jPluginTest {
                         + "   mavenCentral()\n"
                         + "   maven {\n"
                         + "       url 'https://oss.sonatype.org/content/repositories/snapshots'\n"
-                        + "   }"
+                        + "   }\n"
+                        + "   maven {\n"
+                        + "       url 'https://artifacts.consensys.net/public/maven/maven/'\n"
+                        + "   }\n"
                         + "}\n";
 
         Files.write(buildFile.toPath(), buildFileContent.getBytes());
@@ -130,7 +133,10 @@ public class Web3jPluginTest {
                         + "   mavenCentral()\n"
                         + "   maven {\n"
                         + "       url 'https://oss.sonatype.org/content/repositories/snapshots'\n"
-                        + "   }"
+                        + "   }\n"
+                        + "   maven {\n"
+                        + "       url 'https://artifacts.consensys.net/public/maven/maven/'\n"
+                        + "   }\n"
                         + "}\n";
 
         Files.write(buildFile.toPath(), buildFileContent.getBytes());

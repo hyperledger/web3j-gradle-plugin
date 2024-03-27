@@ -25,7 +25,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Features
 
-* Bump version to 4.11.1 [#80](https://github.com/web3j/web3j-gradle-plugin/pull/80)
+* Bump version to 4.11.2 [#80](https://github.com/web3j/web3j-gradle-plugin/pull/80)
 
 ### BREAKING CHANGES
 

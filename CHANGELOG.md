@@ -3,7 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [4.11.2](Upcoming)
+# [4.11.3]() (Upcoming)
+
+### Bug Fixes
+
+* 
+
+### Features
+
+* 
+
+### BREAKING CHANGES
+
+* 
+
+# [4.11.2](https://github.com/web3j/web3j-gradle-plugin/releases/tag/v4.11.1) (2024-03-27)
 
 ### Bug Fixes
 
@@ -11,7 +25,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Features
 
-* NIL
+* Bump version to 4.11.1 [#80](https://github.com/web3j/web3j-gradle-plugin/pull/80)
 
 ### BREAKING CHANGES
 

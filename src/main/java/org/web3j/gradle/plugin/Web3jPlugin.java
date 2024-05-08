@@ -70,7 +70,7 @@ public class Web3jPlugin implements Plugin<Project> {
                 final Properties versionProps = new Properties();
                 try (InputStream inStream = versionPropsFile.openStream()) {
                     versionProps.load(inStream);
-                    return versionProps.getProperty("version");
+                    return versionProps.getProperty("version").replaceAll("-hotfix$", "");
                 }
             } catch (IOException e) {
                 throw new PluginApplicationException(

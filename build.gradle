@@ -13,7 +13,7 @@ description = 'Gradle plugin providing tasks to generate Web3j contracts from So
 sourceCompatibility = 17
 
 ext {
-    web3jVersion = version
+    web3jVersion = version.replaceAll(/-hotfix$/, '')
 }
 
 apply {

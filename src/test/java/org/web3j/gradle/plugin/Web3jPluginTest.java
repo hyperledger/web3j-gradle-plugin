@@ -23,7 +23,6 @@ import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
@@ -50,7 +49,6 @@ public class Web3jPluginTest {
     }
 
     @Test
-    @Disabled("enable once web3j-solidity-gradle 0.5.0 plugin is released")
     public void generateContractWrappersExcluding() throws IOException {
         String buildFileContent =
                 "plugins {\n"
@@ -101,7 +99,6 @@ public class Web3jPluginTest {
     }
 
     @Test
-    @Disabled("enable once web3j-solidity-gradle 0.5.0 plugin is released")
     public void generateContractWrappersIncluding() throws IOException {
         final String buildFileContent =
                 "plugins {\n"
@@ -120,7 +117,6 @@ public class Web3jPluginTest {
                         + "            }\n"
                         + "        }\n"
                         + "    }\n"
-                        + "}\n"
                         + "repositories {\n"
                         + "   mavenCentral()\n"
                         + "   maven {\n"

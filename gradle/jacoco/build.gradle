@@ -7,7 +7,7 @@ task jacocoRootTestReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
     getClassDirectories().from(subprojects.sourceSets.main.output)
     getExecutionData().from(subprojects.jacocoTestReport.executionData)
     reports {
-        xml.enabled true
+        xml.required.set(true)
     }
 
     doFirst {

@@ -4,9 +4,9 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'jacoco'
-    id 'com.diffplug.gradle.spotless' version '4.5.1'
-    id 'com.gradle.plugin-publish' version '1.2.0'
-    id 'de.undercouch.download' version '4.1.1'
+    id 'com.diffplug.spotless' version '6.25.0'
+    id 'com.gradle.plugin-publish' version '1.2.1'
+    id 'de.undercouch.download' version '4.1.2'
 }
 
 description = 'Gradle plugin providing tasks to generate Web3j contracts from Solidity.'
@@ -23,6 +23,7 @@ apply {
         'javadoc',
         'repositories',
         'spotless',
+        'junit'
     ].each { buildScript ->
         download {
             src "https://raw.githubusercontent.com/hyperledger/web3j-build-tools/main/gradle/$buildScript/build.gradle"
@@ -39,9 +40,6 @@ repositories {
     maven {
         url 'https://plugins.gradle.org/m2/'
     }
-    maven {
-        url 'https://artifacts.consensys.net/public/maven/maven/'
-    }
 }
 
 dependencies {
@@ -52,7 +50,6 @@ dependencies {
     implementation("org.web3j:codegen:$web3jVersion") {
         exclude group: 'org.slf4j', module: 'slf4j-nop'
     }
-    testImplementation "junit:junit:$junitVersion"
 
     configurations.all {
         resolutionStrategy {
@@ -102,4 +99,27 @@ task generateVersionProperties {
 
 tasks.withType(Test) {
     reports.html.destination file("${reporting.baseDir}/${name}")
+}
+
+tasks.named('spotlessJava') {
+    dependsOn downloadJavaLicense, downloadFormatterProperties
+    mustRunAfter tasks.named('compileJava')
+    mustRunAfter tasks.named('spotlessGroovyGradle')
+    dependsOn tasks.named('javadoc')
+    dependsOn tasks.named('pluginDescriptors')
+    dependsOn tasks.named('processResources')
+}
+
+tasks.named('spotlessKotlin') {
+    dependsOn downloadJavaLicense, downloadFormatterProperties
+    mustRunAfter tasks.named('compileJava')
+    mustRunAfter tasks.named('spotlessGroovyGradle')
+    dependsOn tasks.named('spotlessJava')
+}
+
+tasks.named('spotlessCheck') {
+    dependsOn downloadJavaLicense, downloadFormatterProperties
+    dependsOn tasks.named('spotlessJava')
+    dependsOn tasks.named('spotlessKotlin')
+    dependsOn tasks.named('spotlessGroovyGradle')
 }

@@ -12,44 +12,45 @@
  */
 package org.web3j.gradle.plugin;
 
-import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.gradle.testkit.runner.TaskOutcome;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
 import static org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Web3jPluginTest {
 
-    @Rule public final TemporaryFolder testProjectDir = new TemporaryFolder();
+    private Path testProjectDir;
+    private Path buildFile;
+    private Path sourceDir;
 
-    private File buildFile;
-    private File sourceDir;
-
-    @Before
-    public void setup() throws IOException {
-        buildFile = testProjectDir.newFile("build.gradle");
-
-        final URL resource = getClass().getClassLoader().getResource("solidity/StandardToken.sol");
-
-        sourceDir = new File(resource.getFile()).getParentFile();
+    @BeforeEach
+    public void setup() throws IOException, URISyntaxException {
+        testProjectDir = Files.createTempDirectory("testProjectDir");
+        buildFile = testProjectDir.resolve("build.gradle");
+        URL resource = getClass().getClassLoader().getResource("solidity/StandardToken.sol");
+        if (resource != null) {
+            sourceDir = Paths.get(resource.toURI()).getParent();
+        }
     }
 
     @Test
     public void generateContractWrappersExcluding() throws IOException {
-        final String buildFileContent =
+        String buildFileContent =
                 "plugins {\n"
                         + "    id 'org.web3j'\n"
                         + "}\n"
@@ -60,52 +61,41 @@ public class Web3jPluginTest {
                         + "sourceSets {\n"
                         + "    main {\n"
                         + "        solidity {\n"
-                        + "            srcDir {"
-                        + "                '"
-                        + sourceDir.getAbsolutePath()
+                        + "            srcDir '"
+                        + sourceDir.toAbsolutePath()
                         + "'\n"
-                        + "            }\n"
                         + "        }\n"
                         + "    }\n"
                         + "}\n"
                         + "repositories {\n"
-                        + "   mavenCentral()\n"
-                        + "   maven {\n"
-                        + "       url 'https://oss.sonatype.org/content/repositories/snapshots'\n"
-                        + "   }\n"
-                        + "   maven {\n"
-                        + "       url 'https://artifacts.consensys.net/public/maven/maven/'\n"
-                        + "   }\n"
+                        + "    mavenCentral()\n"
+                        + "    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }\n"
                         + "}\n";
 
-        Files.write(buildFile.toPath(), buildFileContent.getBytes());
+        Files.write(buildFile, buildFileContent.getBytes());
 
-        final GradleRunner gradleRunner =
+        GradleRunner gradleRunner =
                 GradleRunner.create()
-                        .withProjectDir(testProjectDir.getRoot())
+                        .withProjectDir(testProjectDir.toFile())
                         .withArguments("build")
                         .withPluginClasspath()
                         .forwardOutput();
 
-        final BuildResult success = gradleRunner.build();
+        BuildResult success = gradleRunner.build();
         assertNotNull(success.task(":generateContractWrappers"));
-        assertEquals(SUCCESS, success.task(":generateContractWrappers").getOutcome());
+        assertEquals(TaskOutcome.SUCCESS, success.task(":generateContractWrappers").getOutcome());
 
-        final File web3jContractsDir =
-                new File(testProjectDir.getRoot(), "build/generated/sources/web3j/main/java");
+        Path web3jContractsDir = testProjectDir.resolve("build/generated/sources/web3j/main/java");
+        Path generatedContract = web3jContractsDir.resolve("org/web3j/test/StandardToken.java");
+        assertTrue(Files.exists(generatedContract));
 
-        final File generatedContract =
-                new File(web3jContractsDir, "org/web3j/test/StandardToken.java");
+        Path excludedContract = web3jContractsDir.resolve("org/web3j/test/Token.java");
+        assertFalse(Files.exists(excludedContract));
 
-        assertTrue(generatedContract.exists());
-
-        final File excludedContract = new File(web3jContractsDir, "org/web3j/test/Token.java");
-
-        assertFalse(excludedContract.exists());
-
-        final BuildResult upToDate = gradleRunner.build();
+        BuildResult upToDate = gradleRunner.build();
         assertNotNull(upToDate.task(":generateContractWrappers"));
-        assertEquals(UP_TO_DATE, upToDate.task(":generateContractWrappers").getOutcome());
+        assertEquals(
+                TaskOutcome.UP_TO_DATE, upToDate.task(":generateContractWrappers").getOutcome());
     }
 
     @Test
@@ -121,29 +111,24 @@ public class Web3jPluginTest {
                         + "sourceSets {\n"
                         + "    main {\n"
                         + "        solidity {\n"
-                        + "            srcDir {"
-                        + "                '"
-                        + sourceDir.getAbsolutePath()
+                        + "            srcDir '"
+                        + sourceDir.toAbsolutePath()
                         + "'\n"
                         + "            }\n"
                         + "        }\n"
                         + "    }\n"
-                        + "}\n"
                         + "repositories {\n"
                         + "   mavenCentral()\n"
                         + "   maven {\n"
                         + "       url 'https://oss.sonatype.org/content/repositories/snapshots'\n"
                         + "   }\n"
-                        + "   maven {\n"
-                        + "       url 'https://artifacts.consensys.net/public/maven/maven/'\n"
-                        + "   }\n"
                         + "}\n";
 
-        Files.write(buildFile.toPath(), buildFileContent.getBytes());
+        Files.write(buildFile, buildFileContent.getBytes());
 
         final GradleRunner gradleRunner =
                 GradleRunner.create()
-                        .withProjectDir(testProjectDir.getRoot())
+                        .withProjectDir(testProjectDir.toFile())
                         .withArguments("build")
                         .withPluginClasspath()
                         .forwardOutput();
@@ -152,17 +137,14 @@ public class Web3jPluginTest {
         assertNotNull(success.task(":generateContractWrappers"));
         assertEquals(SUCCESS, success.task(":generateContractWrappers").getOutcome());
 
-        final File web3jContractsDir =
-                new File(testProjectDir.getRoot(), "build/generated/sources/web3j/main/java");
+        final Path web3jContractsDir =
+                testProjectDir.resolve("build/generated/sources/web3j/main/java");
+        final Path generatedContract =
+                web3jContractsDir.resolve("org/web3j/test/StandardToken.java");
+        assertTrue(Files.exists(generatedContract));
 
-        final File generatedContract =
-                new File(web3jContractsDir, "org/web3j/test/StandardToken.java");
-
-        assertTrue(generatedContract.exists());
-
-        final File excludedContract = new File(web3jContractsDir, "org/web3j/test/Token.java");
-
-        assertFalse(excludedContract.exists());
+        final Path excludedContract = web3jContractsDir.resolve("org/web3j/test/Token.java");
+        assertFalse(Files.exists(excludedContract));
 
         final BuildResult upToDate = gradleRunner.build();
         assertNotNull(upToDate.task(":generateContractWrappers"));

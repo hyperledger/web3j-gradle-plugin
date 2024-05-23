@@ -69,9 +69,7 @@ To specify and add different source sets, use the `sourceSets` DSL:
 sourceSets {
     main {
         solidity {
-            srcDir { 
-                "my/custom/path/to/solidity" 
-             }
+            srcDir 'my/custom/path/to/solidity'
         }
     }
 }

@@ -184,11 +184,6 @@ public class Web3jPlugin implements Plugin<Project> {
         final SoliditySourceSet soliditySourceSet =
                 (SoliditySourceSet) convention.getPlugins().get(SoliditySourceSet.NAME);
 
-        try {
-            return soliditySourceSet.getSolidity().getDestinationDirectory().getAsFile().get();
-        } catch (NoSuchMethodError ignored) {
-            // TODO delete this catch block and unwrap the try block after Gradle 8 migration
-            return soliditySourceSet.getSolidity().getOutputDir();
-        }
+        return soliditySourceSet.getSolidity().getDestinationDirectory().getAsFile().get();
     }
 }

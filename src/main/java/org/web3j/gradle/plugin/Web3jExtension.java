@@ -40,6 +40,8 @@ public class Web3jExtension {
     /** Generate smart contract wrappers using native Java types. */
     private Boolean useNativeJavaTypes;
 
+    private Boolean generateBoth;
+
     /** Excluded contract names from wrapper generation. */
     private List<String> excludedContracts;
 
@@ -73,6 +75,14 @@ public class Web3jExtension {
 
     public void setUseNativeJavaTypes(final Boolean useNativeJavaTypes) {
         this.useNativeJavaTypes = useNativeJavaTypes;
+    }
+
+    public Boolean getGenerateBoth() {
+        return generateBoth;
+    }
+
+    public void setGenerateBoth(Boolean generateBoth) {
+        this.generateBoth = generateBoth;
     }
 
     public List<String> getExcludedContracts() {
@@ -110,6 +120,7 @@ public class Web3jExtension {
         excludedContracts = new ArrayList<>();
         includedContracts = new ArrayList<>();
         addressBitLength = Address.DEFAULT_LENGTH / Byte.SIZE;
+        generateBoth = false;
     }
 
     protected String getDefaultGeneratedPackageName(Project project) {

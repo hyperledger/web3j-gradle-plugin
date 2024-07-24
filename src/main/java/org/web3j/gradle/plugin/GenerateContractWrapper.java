@@ -13,6 +13,9 @@
 package org.web3j.gradle.plugin;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.gradle.api.provider.Property;
 import org.gradle.workers.WorkAction;
@@ -28,22 +31,30 @@ public abstract class GenerateContractWrapper
         final String typesFlag =
                 getParameters().getUseNativeJavaTypes().get() ? "--javaTypes" : "--solidityTypes";
 
-        SolidityFunctionWrapperGenerator.main(
-                new String[] {
-                    "--abiFile",
-                    getParameters().getContractAbi().get().getAbsolutePath(),
-                    "--binFile",
-                    getParameters().getContractBin().get().getAbsolutePath(),
-                    "--outputDir",
-                    getParameters().getOutputDir().get(),
-                    "--package",
-                    getParameters().getPackageName().get(),
-                    "--contractName",
-                    getParameters().getContractName().get(),
-                    "--addressLength",
-                    String.valueOf(getParameters().getAddressLength().get()),
-                    typesFlag
-                });
+        final String generateBoth = getParameters().getGenerateBoth().get() ? "--generateBoth" : "";
+
+        List<String> arguments =
+                new ArrayList<>(
+                        Arrays.asList(
+                                "--abiFile",
+                                getParameters().getContractAbi().get().getAbsolutePath(),
+                                "--binFile",
+                                getParameters().getContractBin().get().getAbsolutePath(),
+                                "--outputDir",
+                                getParameters().getOutputDir().get(),
+                                "--package",
+                                getParameters().getPackageName().get(),
+                                "--contractName",
+                                getParameters().getContractName().get(),
+                                "--addressLength",
+                                String.valueOf(getParameters().getAddressLength().get()),
+                                typesFlag));
+
+        if (!generateBoth.isEmpty()) {
+            arguments.add(generateBoth);
+        }
+
+        SolidityFunctionWrapperGenerator.main(arguments.toArray(new String[0]));
     }
 
     public interface Parameters extends WorkParameters {
@@ -61,5 +72,7 @@ public abstract class GenerateContractWrapper
         Property<Integer> getAddressLength();
 
         Property<Boolean> getUseNativeJavaTypes();
+
+        Property<Boolean> getGenerateBoth();
     }
 }

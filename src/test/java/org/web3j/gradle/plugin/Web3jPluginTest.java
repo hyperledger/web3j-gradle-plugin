@@ -107,6 +107,63 @@ public class Web3jPluginTest {
                         + "web3j {\n"
                         + "    generatedPackageName = 'org.web3j.test'\n"
                         + "    includedContracts = ['StandardToken']\n"
+                        + "    generateBoth = true\n"
+                        + "}\n"
+                        + "sourceSets {\n"
+                        + "    main {\n"
+                        + "        solidity {\n"
+                        + "            srcDir '"
+                        + sourceDir.toAbsolutePath()
+                        + "'\n"
+                        + "            }\n"
+                        + "        }\n"
+                        + "    }\n"
+                        + "repositories {\n"
+                        + "   mavenCentral()\n"
+                        + "   maven {\n"
+                        + "       url 'https://oss.sonatype.org/content/repositories/snapshots'\n"
+                        + "   }\n"
+                        + "}\n";
+
+        Files.write(buildFile, buildFileContent.getBytes());
+
+        final GradleRunner gradleRunner =
+                GradleRunner.create()
+                        .withProjectDir(testProjectDir.toFile())
+                        .withArguments("build")
+                        .withPluginClasspath()
+                        .forwardOutput();
+
+        final BuildResult success = gradleRunner.build();
+        assertNotNull(success.task(":generateContractWrappers"));
+        assertEquals(SUCCESS, success.task(":generateContractWrappers").getOutcome());
+
+        final Path web3jContractsDir =
+                testProjectDir.resolve("build/generated/sources/web3j/main/java");
+        final Path generatedContract =
+                web3jContractsDir.resolve("org/web3j/test/StandardToken.java");
+        assertTrue(Files.exists(generatedContract));
+
+        final Path excludedContract = web3jContractsDir.resolve("org/web3j/test/Token.java");
+        assertFalse(Files.exists(excludedContract));
+
+        final BuildResult upToDate = gradleRunner.build();
+        assertNotNull(upToDate.task(":generateContractWrappers"));
+        assertEquals(UP_TO_DATE, upToDate.task(":generateContractWrappers").getOutcome());
+    }
+
+    @Test
+    public void generateContractWrappersIncludingGenerateBothFalseUseNativeJava()
+            throws IOException {
+        final String buildFileContent =
+                "plugins {\n"
+                        + "    id 'org.web3j'\n"
+                        + "}\n"
+                        + "web3j {\n"
+                        + "    generatedPackageName = 'org.web3j.test'\n"
+                        + "    includedContracts = ['StandardToken']\n"
+                        + "    useNativeJavaTypes = true\n"
+                        + "    generateBoth = false\n"
                         + "}\n"
                         + "sourceSets {\n"
                         + "    main {\n"

@@ -124,6 +124,7 @@ public class Web3jPlugin implements Plugin<Project> {
                                     task.setGeneratedJavaPackageName(
                                             extension.getGeneratedPackageName());
                                     task.setUseNativeJavaTypes(extension.getUseNativeJavaTypes());
+                                    task.setGenerateBoth(extension.getGenerateBoth());
                                     task.setGroup(Web3jExtension.NAME);
 
                                     // Set task excluded contracts

@@ -39,6 +39,8 @@ public class GenerateContractWrappers extends SourceTask {
 
     @Input @Optional private Integer addressLength;
 
+    @Input @Optional private Boolean generateBoth;
+
     @Inject
     public GenerateContractWrappers(final WorkerExecutor executor) {
         this.executor = executor;
@@ -72,6 +74,7 @@ public class GenerateContractWrappers extends SourceTask {
                                     params.getPackageName().set(packageName);
                                     params.getAddressLength().set(addressLength);
                                     params.getUseNativeJavaTypes().set(useNativeJavaTypes);
+                                    params.getGenerateBoth().set(generateBoth);
                                 });
             }
         }
@@ -124,5 +127,13 @@ public class GenerateContractWrappers extends SourceTask {
 
     public void setAddressLength(final Integer addressLength) {
         this.addressLength = addressLength;
+    }
+
+    public Boolean getGenerateBoth() {
+        return generateBoth;
+    }
+
+    public void setGenerateBoth(Boolean generateBoth) {
+        this.generateBoth = generateBoth;
     }
 }

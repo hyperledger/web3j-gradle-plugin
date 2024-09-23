@@ -101,25 +101,14 @@ tasks.withType(Test) {
     reports.html.destination file("${reporting.baseDir}/${name}")
 }
 
-tasks.named('spotlessJava') {
-    dependsOn downloadJavaLicense, downloadFormatterProperties
-    mustRunAfter tasks.named('compileJava')
-    mustRunAfter tasks.named('spotlessGroovyGradle')
-    dependsOn tasks.named('javadoc')
-    dependsOn tasks.named('pluginDescriptors')
-    dependsOn tasks.named('processResources')
-}
-
 tasks.named('spotlessKotlin') {
-    dependsOn downloadJavaLicense, downloadFormatterProperties
-    mustRunAfter tasks.named('compileJava')
-    mustRunAfter tasks.named('spotlessGroovyGradle')
-    dependsOn tasks.named('spotlessJava')
+    dependsOn tasks.named('compileTestJava')
+    dependsOn tasks.named('javadoc')
+    dependsOn tasks.named('test')
 }
 
-tasks.named('spotlessCheck') {
-    dependsOn downloadJavaLicense, downloadFormatterProperties
-    dependsOn tasks.named('spotlessJava')
-    dependsOn tasks.named('spotlessKotlin')
-    dependsOn tasks.named('spotlessGroovyGradle')
+tasks.named('spotlessJava') {
+    dependsOn tasks.named('compileTestJava')
+    dependsOn tasks.named('javadoc')
+    dependsOn tasks.named('test')
 }

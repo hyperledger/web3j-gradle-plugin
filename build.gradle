@@ -47,6 +47,7 @@ repositories {
 
 dependencies {
     implementation "org.web3j.solidity:solidity-gradle-plugin:$solidityPluginVersion"
+    implementation "org.web3j:web3j-sokt:0.7.0"
     implementation("org.web3j:core:$web3jVersion") {
         exclude group: 'org.slf4j', module: 'slf4j-nop'
     }
@@ -56,6 +57,7 @@ dependencies {
 
     configurations.all {
         resolutionStrategy {
+            force(group: "org.web3j", name: "web3j-sokt", version: "0.7.0")
             force(group: "org.jetbrains.kotlin", name: "kotlin-reflect", version: kotlinVersion)
             force(group: "org.jetbrains.kotlin", name: "kotlin-stdlib", version: kotlinVersion)
             force(group: "org.jetbrains.kotlin", name: "kotlin-stdlib-common", version: kotlinVersion)

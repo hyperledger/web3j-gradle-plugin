@@ -121,7 +121,7 @@ public class Web3jPluginTest {
                         + "repositories {\n"
                         + "   mavenCentral()\n"
                         + "   maven {\n"
-                        + "       url 'https://oss.sonatype.org/content/repositories/snapshots'\n"
+                        + "       url 'https://central.sonatype.com/repository/maven-snapshots/'\n"
                         + "   }\n"
                         + "}\n";
 
@@ -177,7 +177,7 @@ public class Web3jPluginTest {
                         + "repositories {\n"
                         + "   mavenCentral()\n"
                         + "   maven {\n"
-                        + "       url 'https://oss.sonatype.org/content/repositories/snapshots'\n"
+                        + "       url 'https://central.sonatype.com/repository/maven-snapshots/'\n"
                         + "   }\n"
                         + "}\n";
 

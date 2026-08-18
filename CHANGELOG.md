@@ -7,7 +7,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-*
+* Remove legacy unstable oss.sonatype.org repositories to prevent 504 gateway timeouts during dependency resolution [#103](https://github.com/LFDT-web3j/web3j-gradle-plugin/pull/103)
 
 ### Features
 
